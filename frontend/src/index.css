@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface-light dark:bg-surface-dark text-slate-800 dark:text-slate-100 m-0 h-screen w-screen overflow-hidden transition-colors duration-300;
+  }
+  input, select, textarea {
+    @apply text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: currentColor !important;
+    transition: background-color 50000s ease-in-out 0s !important;
+  }
+}
+
+/* Custom scrollbar for better POS feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; 
+}
