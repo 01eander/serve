@@ -7,6 +7,8 @@ import OrderTicket from '../components/OrderTicket';
 import ItemNotesModal from '../components/ItemNotesModal';
 import CheckoutModal from '../components/CheckoutModal';
 import ReceiptModal from '../components/ReceiptModal';
+import TransferTableModal from '../components/TransferTableModal';
+import ProUpgradeModal from '../components/ProUpgradeModal';
 import { useCompany } from '../contexts/CompanyContext';
 
 export default function POS() {
@@ -16,6 +18,7 @@ export default function POS() {
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
   const [loggedInWaiter, setLoggedInWaiter] = useState(() => {
@@ -35,11 +38,21 @@ export default function POS() {
   
   const [orders, setOrders] = useState({});
   const [orderStatuses, setOrderStatuses] = useState({});
+  const [orderPrinted, setOrderPrinted] = useState({});
+  const [orderWaiters, setOrderWaiters] = useState({});
 
   const [noteModalItem, setNoteModalItem] = useState(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
   const [isMobileOrderOpen, setIsMobileOrderOpen] = useState(false);
   const [currentReceipt, setCurrentReceipt] = useState(null);
+  const [showProModal, setShowProModal] = useState(false);
+  const [proModalReason, setProModalReason] = useState('');
+
+  const handleRequirePro = (reason) => {
+    setProModalReason(reason);
+    setShowProModal(true);
+  };
 
   useEffect(() => {
     if (!company || !company.currency_configured) {
@@ -113,15 +126,53 @@ export default function POS() {
           return newStatusesMap;
         });
 
+        setOrderPrinted(prev => {
+          const newPrintedMap = { ...prev };
+          if (Array.isArray(tablesData)) {
+            tablesData.forEach(t => {
+              if (t.status === 'available' && activeTableIdRef.current !== t.id) {
+                delete newPrintedMap[t.id];
+              }
+            });
+          }
+          if (Array.isArray(ordersData)) {
+            ordersData.forEach(order => {
+              newPrintedMap[order.table_id] = order.is_printed || false;
+            });
+          }
+          return newPrintedMap;
+        });
+
+        setOrderWaiters(prev => {
+          const newWaitersMap = { ...prev };
+          if (Array.isArray(tablesData)) {
+            tablesData.forEach(t => {
+              if (t.status === 'available' && activeTableIdRef.current !== t.id) {
+                delete newWaitersMap[t.id];
+              }
+            });
+          }
+          if (Array.isArray(ordersData)) {
+            ordersData.forEach(order => {
+              if (order.waiter_id) {
+                newWaitersMap[order.table_id] = { id: order.waiter_id, name: order.waiter_name };
+              }
+            });
+          }
+          return newWaitersMap;
+        });
+
         setTables(prev => {
           return (Array.isArray(tablesData) ? tablesData : []).map(t => {
             const status = (isPolling && activeTableIdRef.current === t.id && prev.find(p => p.id === t.id)?.status === 'occupied') 
                 ? 'occupied' 
                 : t.status;
+            const waiterInfo = orderWaiters[t.id] || null;
             return { 
               ...t, 
               status: status,
-              orderTotal: tableTotals[t.id] || 0 
+              orderTotal: tableTotals[t.id] || 0,
+              waiterName: waiterInfo ? waiterInfo.name : null
             };
           });
         });
@@ -138,10 +189,11 @@ export default function POS() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [company]);
+  }, [company, refreshTrigger]);
 
   const activeOrder = orders[activeTableId] || [];
   const activeStatus = orderStatuses[activeTableId] || 'new';
+  const assignedWaiter = orderWaiters[activeTableId] || null;
 
   const subtotal = activeOrder.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0);
   const tax = subtotal * 0.16;
@@ -199,6 +251,10 @@ export default function POS() {
   };
 
   const handleAddToOrder = (product) => {
+    if (orderPrinted[activeTableId]) {
+      alert('La cuenta ya está impresa y bloqueada. Para añadir productos, haz clic en "Reabrir Cuenta".');
+      return;
+    }
     setOrders(prev => {
       const tableOrder = prev[activeTableId] || [];
       const existing = tableOrder.find(item => item.id === product.id);
@@ -217,6 +273,10 @@ export default function POS() {
   };
 
   const handleUpdateQuantity = (productId, delta) => {
+    if (orderPrinted[activeTableId]) {
+      alert('La cuenta está impresa. Debes reabrirla para modificarla.');
+      return;
+    }
     setOrders(prev => {
       const tableOrder = prev[activeTableId] || [];
       const newOrder = tableOrder.map(item => {
@@ -228,16 +288,30 @@ export default function POS() {
       });
       return { ...prev, [activeTableId]: newOrder };
     });
+    if (activeStatus === 'in_kitchen' || activeStatus === 'served') {
+      setOrderStatuses(prev => ({ ...prev, [activeTableId]: 'pending_kitchen' }));
+    }
   };
 
   const handleRemoveItem = (productId) => {
+    if (orderPrinted[activeTableId]) {
+      alert('La cuenta está impresa. Debes reabrirla para modificarla.');
+      return;
+    }
     setOrders(prev => {
       const tableOrder = prev[activeTableId] || [];
       return { ...prev, [activeTableId]: tableOrder.filter(item => item.id !== productId) };
     });
+    if (activeStatus === 'in_kitchen' || activeStatus === 'served') {
+      setOrderStatuses(prev => ({ ...prev, [activeTableId]: 'pending_kitchen' }));
+    }
   };
 
   const handleSaveNote = (productId, note) => {
+    if (orderPrinted[activeTableId]) {
+      alert('La cuenta está impresa. Debes reabrirla para modificarla.');
+      return;
+    }
     setOrders(prev => {
       const tableOrder = prev[activeTableId] || [];
       const newOrder = tableOrder.map(item => 
@@ -245,10 +319,14 @@ export default function POS() {
       );
       return { ...prev, [activeTableId]: newOrder };
     });
+    if (activeStatus === 'in_kitchen' || activeStatus === 'served') {
+      setOrderStatuses(prev => ({ ...prev, [activeTableId]: 'pending_kitchen' }));
+    }
     setNoteModalItem(null);
   };
 
   const handleSendToKitchen = async () => {
+    if (orderPrinted[activeTableId]) return;
     setOrderStatuses(prev => ({ ...prev, [activeTableId]: 'in_kitchen' }));
     
     try {
@@ -258,53 +336,227 @@ export default function POS() {
         body: JSON.stringify({
           table_id: activeTableId,
           items: activeOrder,
-          total_amount: total
+          total_amount: total,
+          waiter_id: loggedInWaiter.id
         })
       });
+      // After sending to kitchen, the logged-in waiter becomes the owner locally if no one was assigned yet
+      if (!assignedWaiter) {
+        setOrderWaiters(prev => ({
+          ...prev,
+          [activeTableId]: { id: loggedInWaiter.id, name: loggedInWaiter.name }
+        }));
+      }
     } catch (err) {
       console.error('Error sending order to backend:', err);
     }
   };
 
-  const handleCheckoutConfirm = (checkoutDetails) => {
-    const receiptData = {
-      ...checkoutDetails,
-      tableName: activeTable?.table_number || activeTable?.number || activeTable?.id,
-      waiterName: loggedInWaiter?.name,
-      items: activeOrder
-    };
-    setCurrentReceipt(receiptData);
+  const handleCheckoutConfirm = async (checkoutDetails) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/pay`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-company-id': company?.id?.toString() || '1'
+        },
+        body: JSON.stringify({ 
+          payment_method: checkoutDetails.paymentMethod,
+          tip_amount: checkoutDetails.tipAmount,
+          discount_amount: checkoutDetails.discountAmount,
+          final_total: checkoutDetails.finalTotal
+        })
+      });
 
-    // Clear the table order
-    setOrders(prev => {
-      const newOrders = { ...prev };
-      delete newOrders[activeTableId];
-      return newOrders;
-    });
-    
-    // Reset table status
-    setTables(prev => prev.map(t => 
-      t.id === activeTableId ? { ...t, status: 'available', orderTotal: 0 } : t
-    ));
-    
-    // Reset order status
-    setOrderStatuses(prev => {
-      const newStatuses = { ...prev };
-      delete newStatuses[activeTableId];
-      return newStatuses;
-    });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Error al procesar pago');
+        return;
+      }
 
-    setShowCheckoutModal(false);
+      const receiptData = {
+        ...checkoutDetails,
+        orderId: data.order_id,
+        tableName: activeTable?.table_number || activeTable?.number || activeTable?.id,
+        waiterName: loggedInWaiter?.name,
+        items: activeOrder
+      };
+      setCurrentReceipt(receiptData);
+
+      // Clear the table order
+      setOrders(prev => {
+        const newOrders = { ...prev };
+        delete newOrders[activeTableId];
+        return newOrders;
+      });
+      
+      // Reset table status
+      setTables(prev => prev.map(t => 
+        t.id === activeTableId ? { ...t, status: 'available', orderTotal: 0, waiterName: null } : t
+      ));
+      
+      // Reset order status and waiters
+      setOrderStatuses(prev => {
+        const newStatuses = { ...prev };
+        delete newStatuses[activeTableId];
+        return newStatuses;
+      });
+      setOrderWaiters(prev => {
+        const newWaiters = { ...prev };
+        delete newWaiters[activeTableId];
+        return newWaiters;
+      });
+
+      setShowCheckoutModal(false);
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión al procesar el pago');
+    }
+  };
+
+  const handlePrintBill = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/print`, {
+        method: 'PATCH',
+        headers: { 'x-company-id': company?.id?.toString() || '1' }
+      });
+      if (!res.ok) {
+        alert('Error al marcar la cuenta como impresa');
+        return;
+      }
+      setOrderPrinted(prev => ({ ...prev, [activeTableId]: true }));
+      
+      setCurrentReceipt({
+        isPreReceipt: true,
+        tableName: activeTable?.table_number || activeTable?.number || activeTable?.id,
+        waiterName: loggedInWaiter?.name,
+        items: activeOrder,
+        subtotal,
+        tax,
+        finalTotal: total,
+        tipAmount: 0,
+        discountAmount: 0
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    }
+  };
+
+  const handleReopenBill = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/reopen`, {
+        method: 'PATCH',
+        headers: { 'x-company-id': company?.id?.toString() || '1' }
+      });
+      if (!res.ok) {
+        alert('Error al reabrir cuenta');
+        return;
+      }
+      setOrderPrinted(prev => ({ ...prev, [activeTableId]: false }));
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    }
   };
 
   const handleCloseReceipt = () => {
     setCurrentReceipt(null);
     setActiveTableId(null);
+    setRefreshTrigger(prev => prev + 1); // Force immediate sync with backend to update table map
+  };
+
+  const handleTransferTable = async (newTableId) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/transfer`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-company-id': company?.id?.toString() || '1'
+        },
+        body: JSON.stringify({ new_table_id: newTableId })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || 'Error al transferir la mesa');
+        return;
+      }
+      
+      // Update local state to reflect the move
+      setOrders(prev => {
+        const newOrders = { ...prev };
+        newOrders[newTableId] = newOrders[activeTableId];
+        delete newOrders[activeTableId];
+        return newOrders;
+      });
+      setOrderStatuses(prev => {
+        const newStatuses = { ...prev };
+        newStatuses[newTableId] = newStatuses[activeTableId];
+        delete newStatuses[activeTableId];
+        return newStatuses;
+      });
+      setOrderPrinted(prev => {
+        const newPrinted = { ...prev };
+        if (newPrinted[activeTableId]) {
+          newPrinted[newTableId] = newPrinted[activeTableId];
+        }
+        delete newPrinted[activeTableId];
+        return newPrinted;
+      });
+      setOrderWaiters(prev => {
+        const newWaiters = { ...prev };
+        if (newWaiters[activeTableId]) {
+          newWaiters[newTableId] = newWaiters[activeTableId];
+        }
+        delete newWaiters[activeTableId];
+        return newWaiters;
+      });
+      
+      setTables(prev => prev.map(t => {
+        if (t.id === activeTableId) return { ...t, status: 'available', orderTotal: 0, waiterName: null };
+        if (t.id === newTableId) return { ...t, status: 'occupied', orderTotal: total, waiterName: assignedWaiter?.name || null };
+        return t;
+      }));
+
+      // Switch view to the new table
+      setActiveTableId(newTableId);
+      setShowTransferModal(false);
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión al transferir la mesa');
+    }
   };
 
   if (loading && company && company.currency_configured) {
     return <div className="flex h-screen items-center justify-center bg-slate-900 text-slate-300 font-bold">Cargando sistema...</div>;
   }
+
+  const handleTakeControl = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/transfer-waiter`, {
+        method: 'PATCH',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-company-id': company?.id?.toString() || '1'
+        },
+        body: JSON.stringify({ new_waiter_id: loggedInWaiter.id })
+      });
+      if (!res.ok) {
+        alert('Error al reasignar la mesa');
+        return;
+      }
+      setOrderWaiters(prev => ({
+        ...prev,
+        [activeTableId]: { id: loggedInWaiter.id, name: loggedInWaiter.name }
+      }));
+      setTables(prev => prev.map(t => 
+        t.id === activeTableId ? { ...t, waiterName: loggedInWaiter.name } : t
+      ));
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    }
+  };
 
   // 1. Show Login Screen if no waiter is logged in
   if (!loggedInWaiter) {
@@ -335,14 +587,23 @@ export default function POS() {
       <OrderTicket 
         orderItems={activeOrder}
         orderStatus={activeStatus}
+        assignedWaiter={assignedWaiter}
+        loggedInWaiter={loggedInWaiter}
+        onTakeControl={handleTakeControl}
+        isPrinted={orderPrinted[activeTableId] || false}
         tableNumber={activeTable?.table_number || activeTable?.number || activeTable?.id}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onAddNote={(item) => setNoteModalItem(item)}
         onSendToKitchen={handleSendToKitchen}
         onCheckout={() => setShowCheckoutModal(true)}
+        onPrintBill={handlePrintBill}
+        onReopenBill={handleReopenBill}
+        onOpenTransfer={() => setShowTransferModal(true)}
         isMobileOpen={isMobileOrderOpen}
         onCloseMobile={() => setIsMobileOrderOpen(false)}
+        isFreemium={company?.plan !== 'pro'}
+        onRequirePro={handleRequirePro}
       />
 
       {/* Floating Mobile Order Bar */}
@@ -385,6 +646,21 @@ export default function POS() {
           onClose={handleCloseReceipt}
         />
       )}
+
+      {showTransferModal && (
+        <TransferTableModal 
+          currentTableId={activeTableId}
+          tables={tables}
+          onClose={() => setShowTransferModal(false)}
+          onConfirm={handleTransferTable}
+        />
+      )}
+
+      <ProUpgradeModal 
+        isOpen={showProModal} 
+        onClose={() => setShowProModal(false)} 
+        triggerReason={proModalReason} 
+      />
     </div>
   );
 }

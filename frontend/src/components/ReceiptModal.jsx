@@ -13,6 +13,7 @@ export default function ReceiptModal({ receiptData, onClose }) {
   if (!receiptData) return null;
 
   const {
+    orderId,
     tableName,
     waiterName,
     items = [],
@@ -26,7 +27,8 @@ export default function ReceiptModal({ receiptData, onClose }) {
     change,
     splitMode,
     numPeople,
-    perPersonAmount
+    perPersonAmount,
+    isPreReceipt
   } = receiptData;
 
   const ticketId = Math.floor(100000 + Math.random() * 900000);
@@ -77,7 +79,9 @@ export default function ReceiptModal({ receiptData, onClose }) {
             {company?.address && (
               <p className="text-[11px] font-sans font-bold text-slate-700 mt-0.5">{company.address}</p>
             )}
-            <p className="text-[10px] text-slate-500 font-sans mt-0.5">Comprobante Digital de Consumo</p>
+            <p className="text-[10px] text-slate-500 font-sans mt-0.5">
+              {isPreReceipt ? 'Cuenta Preliminar / Ticket de Cobro' : 'Comprobante Digital de Consumo'}
+            </p>
             <div className="mt-3 text-[11px] text-slate-600 space-y-1">
               <div className="flex items-center justify-center space-x-1">
                 <Hash className="w-3 h-3 text-slate-400" />
@@ -136,14 +140,16 @@ export default function ReceiptModal({ receiptData, onClose }) {
               <span>Impuestos ({taxRate}%):</span>
               <span>{formatCurrency(tax)}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Propina:</span>
-              <span>{formatCurrency(tipAmount)}</span>
-            </div>
+            {!isPreReceipt && tipAmount > 0 && (
+              <div className="flex justify-between">
+                <span>Propina:</span>
+                <span>{formatCurrency(tipAmount)}</span>
+              </div>
+            )}
 
             <div className="flex justify-between text-base font-black pt-2 text-slate-900 border-t border-slate-200 mt-2">
               <span>TOTAL:</span>
-              <span>{formatCurrency(finalTotal)}</span>
+              <span>{formatCurrency(isPreReceipt ? subtotal + tax - (discountAmount||0) : finalTotal)}</span>
             </div>
 
             {splitMode === 'split' && (
@@ -154,28 +160,39 @@ export default function ReceiptModal({ receiptData, onClose }) {
             )}
           </div>
 
-          {/* Payment Method & Change */}
-          <div className="pt-4 text-xs space-y-1">
-            <div className="flex justify-between font-bold">
-              <span>Método de Pago:</span>
-              <span className="uppercase">{paymentMethod === 'card' ? 'Tarjeta de Débito/Crédito' : 'Efectivo'}</span>
+          {/* Payment Method & Change - Only if NOT pre-receipt */}
+          {!isPreReceipt && (
+            <div className="pt-4 text-xs space-y-1">
+              <div className="flex justify-between font-bold">
+                <span>Método de Pago:</span>
+                <span className="uppercase">{paymentMethod === 'card' ? 'Tarjeta de Débito/Crédito' : 'Efectivo'}</span>
+              </div>
+              {paymentMethod === 'cash' && (
+                <>
+                  <div className="flex justify-between">
+                    <span>Efectivo Recibido:</span>
+                    <span>{formatCurrency(cashReceived)}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-emerald-700">
+                    <span>Cambio Entregado:</span>
+                    <span>{formatCurrency(change)}</span>
+                  </div>
+                </>
+              )}
             </div>
-            {paymentMethod === 'cash' && (
-              <>
-                <div className="flex justify-between">
-                  <span>Efectivo Recibido:</span>
-                  <span>{formatCurrency(cashReceived)}</span>
-                </div>
-                <div className="flex justify-between font-bold text-emerald-700">
-                  <span>Cambio Entregado:</span>
-                  <span>{formatCurrency(change)}</span>
-                </div>
-              </>
-            )}
-          </div>
+          )}
 
           {/* Footer Note */}
           <div className="text-center pt-6 text-[10px] text-slate-500 font-sans border-t border-dashed border-slate-200 mt-4">
+            {company?.plan === 'pro' && orderId && !isPreReceipt && (
+              <div className="mb-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+                <div className="font-bold text-slate-900 mb-1">¿Requieres Factura?</div>
+                <div className="text-slate-600 mb-2">Genera tu factura en 3 segundos escaneando el código QR o ingresando a:</div>
+                <div className="font-mono font-bold text-primary-600 bg-white px-2 py-1.5 rounded-lg border border-slate-200 break-all">
+                  serve.app/facturar/{orderId}
+                </div>
+              </div>
+            )}
             <p className="font-extrabold text-xs text-slate-800">
               {company?.ticket_footer_phrase || '¡Gracias por su preferencia! Vuelva pronto.'}
             </p>
@@ -198,8 +215,8 @@ export default function ReceiptModal({ receiptData, onClose }) {
             onClick={onClose}
             className="flex-1 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-md"
           >
-            <span>Finalizar Orden</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{isPreReceipt ? 'Cerrar' : 'Finalizar Orden'}</span>
+            {!isPreReceipt && <ArrowRight className="w-4 h-4" />}
           </button>
         </div>
 

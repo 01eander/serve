@@ -18,11 +18,11 @@ export default function ProUpgradeModal({ isOpen, onClose, triggerReason }) {
 
   const benefits = [
     { icon: Utensils, title: 'Catálogos 100% Ilimitados', desc: 'Sin límites de 15 platillos, 5 mesas o 3 usuarios. Registra todo lo que tu restaurante necesite.' },
-    { icon: ChefHat, title: 'Pantalla KDS de Cocina en Tiempo Real', desc: 'Gestiona comandas digitales con tiempos de espera para tus cocineros y chefs.' },
-    { icon: Tag, title: 'Módulo de Descuentos & Ofertas', desc: 'Crea promociones, cupones y ofertas especiales para tus clientes.' },
-    { icon: BarChart3, title: 'Analíticas Avanzadas & Rendimiento', desc: 'Revisa gráficas de tendencias de 7 días, productos estrella y ventas por mesero.' },
-    { icon: Image, title: 'Personalización de Marca & Logo', desc: 'Sube tu propio logotipo, dirección y frase personalizada en los tickets de consumo.' },
-    { icon: ShieldCheck, title: 'Soporte Prioritario & Actualizaciones', desc: 'Acceso a nuevas funciones exclusivas y atención preferencial.' },
+    { icon: Users, title: 'Gestión Multi-Sucursal', desc: 'Crea franquicias ilimitadas y controla la matriz desde un solo panel de administrador.' },
+    { icon: ChefHat, title: 'Pantalla KDS de Cocina', desc: 'Gestiona comandas digitales con tiempos de espera para tus cocineros y chefs.' },
+    { icon: Tag, title: 'Control Avanzado de Cuentas', desc: 'Traspaso de mesas, asignación de meseros y corrección de pagos en cuentas cerradas.' },
+    { icon: BarChart3, title: 'Analíticas & Caja Fuerte', desc: 'Gráficas de ventas completas, además de registros de retiros y depósitos de caja chica.' },
+    { icon: Image, title: 'Personalización de Marca', desc: 'Sube tu propio logotipo, dirección y frase personalizada en los tickets de consumo.' },
   ];
 
   return (
@@ -95,12 +95,20 @@ export default function ProUpgradeModal({ isOpen, onClose, triggerReason }) {
                     <span>Hasta 3 Usuarios</span>
                   </li>
                   <li className="flex items-center space-x-2 text-slate-600">
-                    <XCircle className="w-4 h-4 text-slate-600" />
-                    <span className="line-through">Sin pantalla KDS Cocina</span>
+                    <XCircle className="w-4 h-4 text-slate-600 shrink-0" />
+                    <span className="line-through leading-tight">1 sola sucursal</span>
                   </li>
                   <li className="flex items-center space-x-2 text-slate-600">
-                    <XCircle className="w-4 h-4 text-slate-600" />
-                    <span className="line-through">Sin módulo de Ofertas</span>
+                    <XCircle className="w-4 h-4 text-slate-600 shrink-0" />
+                    <span className="line-through leading-tight">Sin Traspasos ni Reapertura de Cuentas</span>
+                  </li>
+                  <li className="flex items-center space-x-2 text-slate-600">
+                    <XCircle className="w-4 h-4 text-slate-600 shrink-0" />
+                    <span className="line-through leading-tight">Sin Retiros/Depósitos de Caja Chica</span>
+                  </li>
+                  <li className="flex items-center space-x-2 text-slate-600">
+                    <XCircle className="w-4 h-4 text-slate-600 shrink-0" />
+                    <span className="line-through leading-tight">Sin Corrección de Pagos</span>
                   </li>
                 </ul>
               </div>
@@ -118,20 +126,24 @@ export default function ProUpgradeModal({ isOpen, onClose, triggerReason }) {
                 </div>
                 <ul className="space-y-2 text-xs text-slate-200 font-bold">
                   <li className="flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Platillos, Mesas y Usuarios Ilimitados</span>
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="leading-tight">Platillos, Mesas y Usuarios Ilimitados</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Pantalla KDS Cocina en Tiempo Real</span>
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="leading-tight">Múltiples Sucursales (Franquicias)</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Módulo de Descuentos & Promociones</span>
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="leading-tight">Traspaso, Reapertura y Corrección de Cuentas</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Logotipo & Dirección en Tickets</span>
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="leading-tight">Control Total de Caja Chica (Retiros/Depósitos)</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span className="leading-tight">Pantalla KDS Cocina & Ofertas</span>
                   </li>
                 </ul>
               </div>

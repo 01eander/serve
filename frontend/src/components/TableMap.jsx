@@ -178,9 +178,16 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
                 )}
                 
                 {table.status === 'occupied' && table.orderTotal > 0 && (
-                  <span className="text-sm font-bold opacity-90 mt-1.5 bg-white/80 dark:bg-black/40 px-4 py-1 rounded-full text-orange-800 dark:text-orange-300 shadow-sm border border-orange-200 dark:border-orange-500/30">
-                    ${table.orderTotal.toFixed(2)}
-                  </span>
+                  <div className="flex flex-col items-center gap-1 mt-1.5">
+                    <span className="text-sm font-bold opacity-90 bg-white/80 dark:bg-black/40 px-4 py-1 rounded-full text-orange-800 dark:text-orange-300 shadow-sm border border-orange-200 dark:border-orange-500/30">
+                      ${table.orderTotal.toFixed(2)}
+                    </span>
+                    {table.waiterName && (
+                      <span className="text-[10px] font-black uppercase text-orange-700/80 dark:text-orange-400/80 tracking-wider text-center">
+                        por {table.waiterName.split(' ')[0]}
+                      </span>
+                    )}
+                  </div>
                 )}
               </motion.button>
             ))}

@@ -182,7 +182,8 @@ export default function CompanyAuthModal({ onAuthenticated }) {
                     placeholder={t('company_email_placeholder')}
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl outline-none focus:border-primary-500 !text-white text-sm font-bold transition-all"
+                    style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold transition-all"
                   />
                 </div>
               </div>
@@ -198,7 +199,8 @@ export default function CompanyAuthModal({ onAuthenticated }) {
                     placeholder={t('password_placeholder')}
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl outline-none focus:border-primary-500 !text-white text-sm font-bold transition-all"
+                    style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold transition-all"
                   />
                 </div>
               </div>
@@ -233,7 +235,8 @@ export default function CompanyAuthModal({ onAuthenticated }) {
                     placeholder={t('restaurant_name_placeholder')}
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl outline-none focus:border-primary-500 !text-white text-sm font-bold transition-all"
+                    style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold transition-all"
                   />
                 </div>
               </div>
@@ -248,7 +251,8 @@ export default function CompanyAuthModal({ onAuthenticated }) {
                     placeholder={t('company_email_new_placeholder')}
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl outline-none focus:border-primary-500 !text-white text-sm font-bold transition-all"
+                    style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold transition-all"
                   />
                 </div>
               </div>
@@ -263,7 +267,8 @@ export default function CompanyAuthModal({ onAuthenticated }) {
                     placeholder={t('password_placeholder')}
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3.5 bg-slate-950/80 border border-slate-800 rounded-2xl outline-none focus:border-primary-500 !text-white text-sm font-bold transition-all"
+                    style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-300 rounded-2xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold transition-all"
                   />
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap } from 'lucide-react';
+import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText } from 'lucide-react';
 import ThemeLangToggles from '../components/ThemeLangToggles';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import SubscriptionAlertBanner from '../components/SubscriptionAlertBanner';
@@ -22,6 +22,9 @@ export default function AdminLayout() {
 
   const navItems = [
     { path: '/admin', icon: LayoutDashboard, label: t('dashboard') },
+    { path: '/admin/cash', icon: DollarSign, label: 'Caja (Efectivo)' },
+    { path: '/admin/orders', icon: ReceiptIcon, label: 'Historial de Cuentas' },
+    { path: '/admin/invoices', icon: FileText, label: 'Facturación' },
     { path: '/admin/catalogs', icon: Layers, label: t('catalogs') },
     { path: '/admin/promotions', icon: Tag, label: t('promotions_offers') },
     { path: '/admin/settings', icon: Settings, label: t('settings') },

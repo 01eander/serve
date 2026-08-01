@@ -10,6 +10,8 @@ import promotionsRouter from './routes/promotions.js';
 import companiesRouter from './routes/companies.js';
 import dashboardRouter from './routes/dashboard.js';
 import masterRouter from './routes/master.js';
+import cashRouter from './routes/cash.js';
+import invoicesRouter from './routes/invoices.js';
 
 dotenv.config();
 
@@ -28,6 +30,8 @@ app.use('/api/tables', tablesRouter);
 app.use('/api/menu', menuRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/promotions', promotionsRouter);
+app.use('/api/cash', cashRouter);
+app.use('/api/invoices', invoicesRouter);
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {

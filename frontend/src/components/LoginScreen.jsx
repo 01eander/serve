@@ -188,7 +188,8 @@ export default function LoginScreen({ users, onLogin }) {
                         onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(e); }}
                         placeholder="••••"
                         maxLength={4}
-                        className="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-200 dark:bg-black/40 dark:border-white/10 focus:border-primary-500 rounded-2xl text-3xl tracking-[1em] text-center font-black outline-none transition-all !text-slate-800 dark:!text-white shadow-inner"
+                        style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                        className="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-300 focus:border-primary-500 rounded-2xl text-3xl tracking-[1em] text-center font-black outline-none transition-all text-slate-900 shadow-inner"
                         autoFocus
                       />
                     </div>
