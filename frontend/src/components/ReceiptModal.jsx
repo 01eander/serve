@@ -3,11 +3,13 @@ import { CheckCircle2, Printer, ArrowRight, Store, Calendar, User, Hash, Utensil
 import { motion } from 'framer-motion';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useCompany } from '../contexts/CompanyContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import serveLogo from '../images/SERVE_Logo.png';
 
 export default function ReceiptModal({ receiptData, onClose }) {
   const { taxRate, formatCurrency } = useCurrency();
   const { company } = useCompany();
+  const { t } = useLanguage();
   const receiptRef = useRef();
 
   if (!receiptData) return null;
@@ -164,17 +166,17 @@ export default function ReceiptModal({ receiptData, onClose }) {
           {!isPreReceipt && (
             <div className="pt-4 text-xs space-y-1">
               <div className="flex justify-between font-bold">
-                <span>Método de Pago:</span>
-                <span className="uppercase">{paymentMethod === 'card' ? 'Tarjeta de Débito/Crédito' : 'Efectivo'}</span>
+                <span>{t('payment_method')}:</span>
+                <span className="uppercase">{paymentMethod === 'card' ? t('debit_credit_card') : t('cash_payment')}</span>
               </div>
               {paymentMethod === 'cash' && (
                 <>
                   <div className="flex justify-between">
-                    <span>Efectivo Recibido:</span>
+                    <span>{t('cash_received')}:</span>
                     <span>{formatCurrency(cashReceived)}</span>
                   </div>
                   <div className="flex justify-between font-bold text-emerald-700">
-                    <span>Cambio Entregado:</span>
+                    <span>{t('change_given')}:</span>
                     <span>{formatCurrency(change)}</span>
                   </div>
                 </>
@@ -186,8 +188,8 @@ export default function ReceiptModal({ receiptData, onClose }) {
           <div className="text-center pt-6 text-[10px] text-slate-500 font-sans border-t border-dashed border-slate-200 mt-4">
             {company?.plan === 'pro' && orderId && !isPreReceipt && (
               <div className="mb-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                <div className="font-bold text-slate-900 mb-1">¿Requieres Factura?</div>
-                <div className="text-slate-600 mb-2">Genera tu factura en 3 segundos escaneando el código QR o ingresando a:</div>
+                <div className="font-bold text-slate-900 mb-1">{t('need_invoice')}</div>
+                <div className="text-slate-600 mb-2">{t('invoice_scan_msg')}</div>
                 <div className="font-mono font-bold text-primary-600 bg-white px-2 py-1.5 rounded-lg border border-slate-200 break-all">
                   serve.app/facturar/{orderId}
                 </div>
@@ -208,14 +210,14 @@ export default function ReceiptModal({ receiptData, onClose }) {
             className="flex-1 py-3.5 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-sm"
           >
             <Printer className="w-4 h-4" />
-            <span>Imprimir Recibo</span>
+            <span>{t('print_receipt')}</span>
           </button>
           
           <button
             onClick={onClose}
             className="flex-1 py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-md"
           >
-            <span>{isPreReceipt ? 'Cerrar' : 'Finalizar Orden'}</span>
+            <span>{isPreReceipt ? t('close_btn') : t('finish_order')}</span>
             {!isPreReceipt && <ArrowRight className="w-4 h-4" />}
           </button>
         </div>

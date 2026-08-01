@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Receipt, CheckCircle2, ChevronRight, FileText, Mail, ShieldCheck, Zap } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function InvoicePortal() {
   const { orderId } = useParams();
+  const { t } = useLanguage();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -98,8 +100,8 @@ export default function InvoicePortal() {
             <Receipt className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="font-black text-lg text-slate-900 leading-tight">Facturación Electrónica</h1>
-            <p className="text-xs font-medium text-slate-500">Impulsado por Serve POS</p>
+            <h1 className="font-black text-lg text-slate-900 leading-tight">{t('invoice_portal_title')}</h1>
+            <p className="text-xs font-medium text-slate-500">{t('powered_by')}</p>
           </div>
         </div>
       </header>
@@ -119,7 +121,7 @@ export default function InvoicePortal() {
                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Resumen de Consumo</h3>
+                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">{t('consumption_summary')}</h3>
                       <div className="text-2xl font-black text-slate-900">${Number(order.total).toFixed(2)}</div>
                     </div>
                     <span className="bg-emerald-50 text-emerald-600 font-bold px-3 py-1 rounded-full text-xs border border-emerald-100">
@@ -146,7 +148,7 @@ export default function InvoicePortal() {
                 <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
                   <h2 className="text-lg font-black text-slate-800 mb-2 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary-500" />
-                    Tus Datos Fiscales
+                    {t('fiscal_details')}
                   </h2>
 
                   {error && (
@@ -157,7 +159,7 @@ export default function InvoicePortal() {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">RFC</label>
+                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('rfc')}</label>
                       <input 
                         type="text" 
                         name="rfc"
@@ -169,7 +171,7 @@ export default function InvoicePortal() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Razón Social</label>
+                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('business_name')}</label>
                       <input 
                         type="text" 
                         name="razonSocial"
@@ -183,7 +185,7 @@ export default function InvoicePortal() {
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Código Postal</label>
+                        <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('postal_code')}</label>
                         <input 
                           type="text" 
                           name="cp"
@@ -195,7 +197,7 @@ export default function InvoicePortal() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Uso CFDI</label>
+                        <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('cfdi_use')}</label>
                         <select 
                           name="usoCfdi"
                           value={formData.usoCfdi}
@@ -210,7 +212,7 @@ export default function InvoicePortal() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Régimen Fiscal</label>
+                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('fiscal_regime')}</label>
                       <select 
                         name="regimenFiscal"
                         value={formData.regimenFiscal}
@@ -224,7 +226,7 @@ export default function InvoicePortal() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">Correo de envío</label>
+                      <label className="block text-xs font-bold text-slate-500 mb-1 ml-1 uppercase">{t('delivery_email')}</label>
                       <input 
                         type="email" 
                         name="email"
@@ -246,7 +248,7 @@ export default function InvoicePortal() {
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                       <>
-                        <span>Generar Factura Ahora</span>
+                        <span>{t('generate_invoice')}</span>
                         <ChevronRight className="w-5 h-5" />
                       </>
                     )}
@@ -254,7 +256,7 @@ export default function InvoicePortal() {
                   
                   <div className="flex items-center justify-center gap-2 mt-4 text-xs font-medium text-slate-400">
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Conexión segura y encriptada</span>
+                    <span>{t('secure_connection')}</span>
                   </div>
                 </form>
               )}
@@ -271,10 +273,10 @@ export default function InvoicePortal() {
               <div className="w-24 h-24 bg-gradient-to-tr from-emerald-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-emerald-500/40">
                 <CheckCircle2 className="w-12 h-12 text-white" />
               </div>
-              <h2 className="text-3xl font-black text-slate-900 mb-3">¡Factura Generada!</h2>
+              <h2 className="text-3xl font-black text-slate-900 mb-3">{t('invoice_generated')}</h2>
               <p className="text-slate-500 font-medium mb-8 leading-relaxed">
-                Tu factura ha sido timbrada exitosamente y la enviamos a <strong className="text-slate-900">{formData.email}</strong>. 
-                Deberías recibirla en los próximos minutos.
+                {t('invoice_sent_msg')} <strong className="text-slate-900">{formData.email}</strong>. 
+                {t('receive_soon')}
               </p>
               
               <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100 mb-8 text-left">
@@ -283,8 +285,8 @@ export default function InvoicePortal() {
                     <Mail className="w-5 h-5 text-primary-500" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-400 uppercase">Estatus SAT</div>
-                    <div className="text-sm font-bold text-slate-900">Timbrado Exitoso</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase">{t('sat_status')}</div>
+                    <div className="text-sm font-bold text-slate-900">{t('stamp_success')}</div>
                   </div>
                 </div>
                 <Zap className="w-5 h-5 text-amber-500" />

@@ -10,9 +10,11 @@ import ReceiptModal from '../components/ReceiptModal';
 import TransferTableModal from '../components/TransferTableModal';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import { useCompany } from '../contexts/CompanyContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function POS() {
   const { company, companyFetch } = useCompany();
+  const { t } = useLanguage();
   const [users, setUsers] = useState([]);
   const [tables, setTables] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -252,7 +254,7 @@ export default function POS() {
 
   const handleAddToOrder = (product) => {
     if (orderPrinted[activeTableId]) {
-      alert('La cuenta ya está impresa y bloqueada. Para añadir productos, haz clic en "Reabrir Cuenta".');
+      alert(t('bill_printed_locked'));
       return;
     }
     setOrders(prev => {
@@ -295,7 +297,7 @@ export default function POS() {
 
   const handleRemoveItem = (productId) => {
     if (orderPrinted[activeTableId]) {
-      alert('La cuenta está impresa. Debes reabrirla para modificarla.');
+      alert(t('bill_printed_modify'));
       return;
     }
     setOrders(prev => {
@@ -309,7 +311,7 @@ export default function POS() {
 
   const handleSaveNote = (productId, note) => {
     if (orderPrinted[activeTableId]) {
-      alert('La cuenta está impresa. Debes reabrirla para modificarla.');
+      alert(t('bill_printed_modify'));
       return;
     }
     setOrders(prev => {

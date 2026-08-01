@@ -98,20 +98,58 @@ router.get('/stats', async (req, res) => {
       status: parseFloat(r.total || 0) > 0 ? 'Activo' : 'Sin ventas hoy'
     }));
 
+    // 6. Payment Distribution (Cash vs Card)
+    const paymentsRes = await pool.query(`
+      SELECT 
+        payment_method, 
+        COUNT(id) AS count,
+        COALESCE(SUM(total_amount), 0) AS total
+      FROM orders
+      WHERE company_id = $1 AND DATE(created_at) >= CURRENT_DATE - INTERVAL '30 days'
+        AND status = 'paid'
+      GROUP BY payment_method
+    `, [companyId]);
+
+    const paymentStats = paymentsRes.rows.map(r => ({
+      name: r.payment_method === 'cash' ? 'Efectivo' : (r.payment_method === 'card' ? 'Tarjeta' : 'Otro'),
+      value: parseFloat(r.total)
+    }));
+
+    // 7. Heatmap (Sales by Day of Week and Hour - last 30 days)
+    const heatmapRes = await pool.query(`
+      SELECT 
+        EXTRACT(DOW FROM created_at) AS day_of_week,
+        EXTRACT(HOUR FROM created_at) AS hour_of_day,
+        COUNT(id) AS order_count
+      FROM orders
+      WHERE company_id = $1 AND created_at >= CURRENT_DATE - INTERVAL '30 days'
+      GROUP BY day_of_week, hour_of_day
+    `, [companyId]);
+
+    // Format heatmap data for the frontend (0=Sunday, 1=Monday... 6=Saturday)
+    // We want to return an array of objects: { day: 0..6, hour: 0..23, value: count }
+    const heatmapData = heatmapRes.rows.map(r => ({
+      day: parseInt(r.day_of_week, 10),
+      hour: parseInt(r.hour_of_day, 10),
+      value: parseInt(r.order_count, 10)
+    }));
+
     res.json({
       metrics: {
         todaySales: totalSales,
-        todayOrders: totalOrders,
+        todayOrdersCount: totalOrders,
         avgTicket: avgTicket,
-        activeStaff: staffCount
+        activeStaffCount: staffCount
       },
-      salesData,
-      topItems,
-      staffPerformance
+      salesTrend: salesData,
+      topItems: topItems,
+      staffPerformance: staffPerformance,
+      paymentStats: paymentStats,
+      heatmapData: heatmapData
     });
-  } catch (err) {
-    console.error('Error fetching dashboard stats:', err);
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { FileText, Search, Filter, AlertCircle, CheckCircle2, Clock, FileWarning, ExternalLink, Download } from 'lucide-react';
 import { useCompany } from '../../contexts/CompanyContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 
 export default function InvoicesManager() {
   const { company } = useCompany();
+  const { t } = useLanguage();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,15 +47,15 @@ export default function InvoicesManager() {
         <div className="w-24 h-24 bg-gradient-to-tr from-amber-400 to-amber-600 rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-amber-500/20 rotate-3">
           <FileText className="w-12 h-12 text-white" />
         </div>
-        <h2 className="text-3xl font-black text-slate-900 mb-4">Facturación Automática</h2>
+        <h2 className="text-3xl font-black text-slate-900 mb-4">{t('invoicing_auto')}</h2>
         <p className="text-slate-500 max-w-md mb-8 text-lg font-medium leading-relaxed">
-          Permite a tus clientes generar su propia factura escaneando su ticket. Ahorra horas de trabajo administrativo. Exclusivo para usuarios <strong>PRO</strong>.
+          {t('invoicing_promo')} <strong>PRO</strong>.
         </p>
         <button
           onClick={() => setShowProModal(true)}
           className="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-8 rounded-2xl flex items-center space-x-2 transition-all active:scale-[0.98] shadow-lg shadow-slate-900/20"
         >
-          <span>Descubrir Versión PRO</span>
+          <span>{t('discover_pro')}</span>
         </button>
 
         <ProUpgradeModal 
@@ -101,8 +103,8 @@ export default function InvoicesManager() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Facturación Electrónica</h1>
-          <p className="text-slate-500 font-medium">Historial de solicitudes de facturas de clientes</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">{t('invoicing_electronic')}</h1>
+          <p className="text-slate-500 font-medium">{t('invoicing_desc')}</p>
         </div>
         
         <div className="flex space-x-3 w-full md:w-auto">
@@ -110,13 +112,13 @@ export default function InvoicesManager() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
             <input 
               type="text" 
-              placeholder="Buscar RFC o Razón Social..." 
+              placeholder={t('search_rfc')} 
               className="w-full bg-white border border-slate-200 pl-10 pr-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all"
             />
           </div>
           <button className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-2.5 px-4 rounded-xl flex items-center space-x-2 transition-colors">
             <Filter className="w-4 h-4" />
-            <span className="hidden sm:inline">Filtrar</span>
+            <span className="hidden sm:inline">{t('filter')}</span>
           </button>
         </div>
       </div>

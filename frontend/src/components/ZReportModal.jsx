@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { X, Printer, CheckCircle2, AlertTriangle, DollarSign, Calendar, Clock, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function ZReportModal({ onClose }) {
   const [actualCash, setActualCash] = useState('');
   const [shiftClosed, setShiftClosed] = useState(false);
+  const { t } = useLanguage();
 
   // Mocked shift system totals (would come from DB in production)
   const systemTotals = {
@@ -145,7 +147,7 @@ export default function ZReportModal({ onClose }) {
             className="flex-1 py-3.5 px-4 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-sm"
           >
             <Printer className="w-4 h-4" />
-            <span>Imprimir Reporte Z</span>
+            <span>{t('print_z_report')}</span>
           </button>
 
           {!shiftClosed ? (
@@ -155,7 +157,7 @@ export default function ZReportModal({ onClose }) {
               className="flex-1 py-3.5 px-4 bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 text-white font-bold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-md disabled:opacity-50"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Cerrar Turno</span>
+              <span>{t('close_shift')}</span>
             </button>
           ) : (
             <button

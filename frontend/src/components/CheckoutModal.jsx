@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { X, CreditCard, Banknote, CheckCircle2, Users, Percent, DollarSign, Split } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function CheckoutModal({ subtotal, tax, total, onClose, onConfirm }) {
   const { taxRate, formatCurrency, activeCurrency } = useCurrency();
+  const { t } = useLanguage();
   // Discount state
   const [discountPercent, setDiscountPercent] = useState(0);
   const [customDiscount, setCustomDiscount] = useState('');
@@ -289,7 +291,7 @@ export default function CheckoutModal({ subtotal, tax, total, onClose, onConfirm
                 }`}
               >
                 <CreditCard className="w-5 h-5" />
-                <span>Tarjeta</span>
+                <span>{t('card_payment')}</span>
               </button>
               <button
                 onClick={() => setPaymentMethod('cash')}
@@ -300,7 +302,7 @@ export default function CheckoutModal({ subtotal, tax, total, onClose, onConfirm
                 }`}
               >
                 <Banknote className="w-5 h-5" />
-                <span>Efectivo</span>
+                <span>{t('cash_payment')}</span>
               </button>
             </div>
           </div>
@@ -315,7 +317,7 @@ export default function CheckoutModal({ subtotal, tax, total, onClose, onConfirm
                 className="overflow-hidden"
               >
                 <div className="pt-2">
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Efectivo Recibido</label>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('cash_received_label')}</label>
                   <div className="relative">
                     <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">$</span>
                     <input

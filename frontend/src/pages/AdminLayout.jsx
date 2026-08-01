@@ -22,16 +22,16 @@ export default function AdminLayout() {
 
   const navItems = [
     { path: '/admin', icon: LayoutDashboard, label: t('dashboard') },
-    { path: '/admin/cash', icon: DollarSign, label: 'Caja (Efectivo)' },
-    { path: '/admin/orders', icon: ReceiptIcon, label: 'Historial de Cuentas' },
-    { path: '/admin/invoices', icon: FileText, label: 'Facturación' },
+    { path: '/admin/cash', icon: DollarSign, label: t('sidebar_cash') },
+    { path: '/admin/orders', icon: ReceiptIcon, label: t('sidebar_orders') },
+    { path: '/admin/invoices', icon: FileText, label: t('sidebar_invoicing') },
     { path: '/admin/catalogs', icon: Layers, label: t('catalogs') },
     { path: '/admin/promotions', icon: Tag, label: t('promotions_offers') },
     { path: '/admin/settings', icon: Settings, label: t('settings') },
   ];
 
   if (company?.is_franchise_parent) {
-    navItems.splice(1, 0, { path: '/admin/hq', icon: Building2, label: 'Centro HQ' });
+    navItems.splice(1, 0, { path: '/admin/hq', icon: Building2, label: t('franchise_hq') });
   }
 
   return (

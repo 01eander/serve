@@ -230,7 +230,133 @@ const translations = {
     on_shift: 'en turno',
     
     // Upgrade
-    pro_exclusive: 'Módulo Exclusivo 👑 PRO'
+    pro_exclusive: 'Módulo Exclusivo 👑 PRO',
+
+    // Cash Management
+    cash_management: 'Caja (Efectivo)',
+    open_cash: 'Abrir Caja',
+    close_cash: 'Cerrar Caja',
+    open_btn: 'Abrir',
+    initial_amount: 'Monto Inicial',
+    cash_session_active: 'Sesión de Caja Activa',
+    no_active_session: 'No hay sesión de caja activa',
+    open_cash_to_start: 'Abre caja para empezar a registrar movimientos.',
+    withdrawal: 'Retiro',
+    deposit: 'Depósito',
+    payment: 'Pago',
+    new_withdrawal: 'Nuevo Retiro',
+    new_deposit: 'Nuevo Depósito',
+    amount: 'Monto',
+    concept: 'Concepto',
+    movements: 'Movimientos',
+    no_movements: 'Sin movimientos registrados',
+    close_cash_confirm: '¿Cerrar la sesión de caja?',
+    closing_balance: 'Balance de Cierre',
+
+    // Orders History
+    orders_history: 'Historial de Cuentas',
+    orders_history_desc: 'Todas las cuentas procesadas',
+    correct_payment: 'Corregir Pago',
+    cash_word: 'Efectivo',
+    card_word: 'Tarjeta',
+    paid: 'Pagado',
+    cancelled: 'Cancelado',
+
+    // Invoicing
+    invoicing: 'Facturación',
+    invoicing_auto: 'Facturación Automática',
+    invoicing_electronic: 'Facturación Electrónica',
+    invoicing_desc: 'Historial de solicitudes de facturas de clientes',
+    invoicing_promo: 'Permite a tus clientes generar su propia factura escaneando su ticket. Ahorra horas de trabajo administrativo.',
+    discover_pro: 'Descubrir Versión PRO',
+    search_rfc: 'Buscar RFC o Razón Social...',
+    filter: 'Filtrar',
+    invoice_id: 'ID Factura',
+    request_date: 'Fecha Solicitud',
+    fiscal_data: 'Datos Fiscales',
+    ticket_word: 'Ticket',
+    amount_word: 'Monto',
+    status_word: 'Estatus',
+    stamped: 'Timbrada',
+    pending_word: 'Pendiente',
+    sat_error: 'Error SAT',
+    no_invoices: 'No hay solicitudes de factura registradas.',
+
+    // Invoice Portal (public)
+    invoice_portal_title: 'Facturación Electrónica',
+    powered_by: 'Impulsado por Serve POS',
+    consumption_summary: 'Resumen de Consumo',
+    fiscal_details: 'Tus Datos Fiscales',
+    rfc: 'RFC',
+    business_name: 'Razón Social',
+    postal_code: 'Código Postal',
+    cfdi_use: 'Uso CFDI',
+    fiscal_regime: 'Régimen Fiscal',
+    delivery_email: 'Correo de envío',
+    generate_invoice: 'Generar Factura Ahora',
+    secure_connection: 'Conexión segura y encriptada',
+    invoice_generated: '¡Factura Generada!',
+    invoice_sent_msg: 'Tu factura ha sido timbrada exitosamente y la enviamos a',
+    receive_soon: 'Deberías recibirla en los próximos minutos.',
+    sat_status: 'Estatus SAT',
+    stamp_success: 'Timbrado Exitoso',
+    need_invoice: '¿Requieres Factura?',
+    invoice_scan_msg: 'Genera tu factura en 3 segundos escaneando el código QR o ingresando a:',
+
+    // Franchise / HQ
+    franchise_hq: 'Centro HQ',
+    active_branches: 'Sucursales Activas',
+    branch: 'Sucursal',
+    branches_can_edit: 'Sucursales pueden editar menú',
+    strict_global_menu: 'Menú Global Estricto',
+
+    // Order Ticket extras
+    transfer_table: 'Mudar de Mesa',
+    reopen_bill: 'Reabrir Cuenta',
+    print_bill: 'Imprimir Cuenta',
+    bill_printed_locked: 'La cuenta ya está impresa y bloqueada. Para añadir productos, haz clic en "Reabrir Cuenta".',
+    bill_printed_modify: 'La cuenta está impresa. Debes reabrirla para modificarla.',
+
+    // Receipt Modal
+    payment_method: 'Método de Pago',
+    debit_credit_card: 'Tarjeta de Débito/Crédito',
+    cash_received: 'Efectivo Recibido',
+    change_given: 'Cambio Entregado',
+    print_receipt: 'Imprimir Recibo',
+    close_btn: 'Cerrar',
+    finish_order: 'Finalizar Orden',
+
+    // Checkout Modal
+    cash_payment: 'Efectivo',
+    card_payment: 'Tarjeta',
+    cash_received_label: 'Efectivo Recibido',
+
+    // Z Report
+    print_z_report: 'Imprimir Reporte Z',
+    close_shift: 'Cerrar Turno',
+
+    // Dashboard (new)
+    income_trend: 'Tendencia de Ingresos',
+    sales_by_day: 'Comportamiento de ventas por día',
+    payment_methods: 'Métodos de Pago',
+    payment_dist_30d: 'Distribución de los últimos 30 días',
+    no_payment_data: 'Sin datos de cobro',
+    peak_hours: 'Horas Pico (Mapa de Calor)',
+    last_30_days: 'Últimos 30 días',
+    peak_hours_desc: 'Identifica los días y horas con mayor afluencia de clientes para optimizar tu personal.',
+    not_enough_data: 'Sin suficientes datos para el mapa de calor',
+    orders_count: 'Órdenes',
+    units: 'unids.',
+    top_n: 'Top',
+    dashboard_control: 'Control total sobre los números de tu restaurante.',
+
+    // Admin Layout sidebar
+    sidebar_cash: 'Caja (Efectivo)',
+    sidebar_orders: 'Historial de Cuentas',
+    sidebar_invoicing: 'Facturación',
+
+    // Subscription banner
+    subscription_alert: 'Alerta de Suscripción'
   },
   en: {
     // Nav & General
@@ -465,7 +591,133 @@ const translations = {
     on_shift: 'on shift',
     
     // Upgrade
-    pro_exclusive: 'Exclusive Module 👑 PRO'
+    pro_exclusive: 'Exclusive Module 👑 PRO',
+
+    // Cash Management
+    cash_management: 'Cash Drawer',
+    open_cash: 'Open Cash Drawer',
+    close_cash: 'Close Cash Drawer',
+    open_btn: 'Open',
+    initial_amount: 'Initial Amount',
+    cash_session_active: 'Active Cash Session',
+    no_active_session: 'No active cash session',
+    open_cash_to_start: 'Open the cash drawer to start recording transactions.',
+    withdrawal: 'Withdrawal',
+    deposit: 'Deposit',
+    payment: 'Payment',
+    new_withdrawal: 'New Withdrawal',
+    new_deposit: 'New Deposit',
+    amount: 'Amount',
+    concept: 'Description',
+    movements: 'Transactions',
+    no_movements: 'No transactions recorded',
+    close_cash_confirm: 'Close cash session?',
+    closing_balance: 'Closing Balance',
+
+    // Orders History
+    orders_history: 'Orders History',
+    orders_history_desc: 'All processed orders',
+    correct_payment: 'Correct Payment',
+    cash_word: 'Cash',
+    card_word: 'Card',
+    paid: 'Paid',
+    cancelled: 'Cancelled',
+
+    // Invoicing
+    invoicing: 'Invoicing',
+    invoicing_auto: 'Automatic Invoicing',
+    invoicing_electronic: 'Electronic Invoicing',
+    invoicing_desc: 'Customer invoice request history',
+    invoicing_promo: 'Let your customers generate their own invoice by scanning their ticket. Save hours of administrative work.',
+    discover_pro: 'Discover PRO Version',
+    search_rfc: 'Search Tax ID or Business Name...',
+    filter: 'Filter',
+    invoice_id: 'Invoice ID',
+    request_date: 'Request Date',
+    fiscal_data: 'Tax Data',
+    ticket_word: 'Ticket',
+    amount_word: 'Amount',
+    status_word: 'Status',
+    stamped: 'Stamped',
+    pending_word: 'Pending',
+    sat_error: 'Tax Error',
+    no_invoices: 'No invoice requests registered.',
+
+    // Invoice Portal (public)
+    invoice_portal_title: 'Electronic Invoicing',
+    powered_by: 'Powered by Serve POS',
+    consumption_summary: 'Consumption Summary',
+    fiscal_details: 'Your Tax Details',
+    rfc: 'Tax ID (RFC)',
+    business_name: 'Business Name',
+    postal_code: 'Postal Code',
+    cfdi_use: 'CFDI Use',
+    fiscal_regime: 'Tax Regime',
+    delivery_email: 'Delivery Email',
+    generate_invoice: 'Generate Invoice Now',
+    secure_connection: 'Secure and encrypted connection',
+    invoice_generated: 'Invoice Generated!',
+    invoice_sent_msg: 'Your invoice has been successfully stamped and sent to',
+    receive_soon: 'You should receive it within the next few minutes.',
+    sat_status: 'Tax Authority Status',
+    stamp_success: 'Stamp Successful',
+    need_invoice: 'Need an invoice?',
+    invoice_scan_msg: 'Generate your invoice in 3 seconds by scanning the QR code or visiting:',
+
+    // Franchise / HQ
+    franchise_hq: 'HQ Center',
+    active_branches: 'Active Branches',
+    branch: 'Branch',
+    branches_can_edit: 'Branches can edit menu',
+    strict_global_menu: 'Strict Global Menu',
+
+    // Order Ticket extras
+    transfer_table: 'Transfer Table',
+    reopen_bill: 'Reopen Bill',
+    print_bill: 'Print Bill',
+    bill_printed_locked: 'The bill is already printed and locked. To add items, click "Reopen Bill".',
+    bill_printed_modify: 'The bill is printed. You must reopen it to modify.',
+
+    // Receipt Modal
+    payment_method: 'Payment Method',
+    debit_credit_card: 'Debit/Credit Card',
+    cash_received: 'Cash Received',
+    change_given: 'Change Given',
+    print_receipt: 'Print Receipt',
+    close_btn: 'Close',
+    finish_order: 'Finish Order',
+
+    // Checkout Modal
+    cash_payment: 'Cash',
+    card_payment: 'Card',
+    cash_received_label: 'Cash Received',
+
+    // Z Report
+    print_z_report: 'Print Z Report',
+    close_shift: 'Close Shift',
+
+    // Dashboard (new)
+    income_trend: 'Income Trend',
+    sales_by_day: 'Sales behavior by day',
+    payment_methods: 'Payment Methods',
+    payment_dist_30d: 'Distribution over the last 30 days',
+    no_payment_data: 'No payment data',
+    peak_hours: 'Peak Hours (Heatmap)',
+    last_30_days: 'Last 30 days',
+    peak_hours_desc: 'Identify the days and hours with the highest customer flow to optimize your staff.',
+    not_enough_data: 'Not enough data for heatmap',
+    orders_count: 'Orders',
+    units: 'units',
+    top_n: 'Top',
+    dashboard_control: 'Full control over your restaurant numbers.',
+
+    // Admin Layout sidebar
+    sidebar_cash: 'Cash Drawer',
+    sidebar_orders: 'Orders History',
+    sidebar_invoicing: 'Invoicing',
+
+    // Subscription banner
+    subscription_alert: 'Subscription Alert'
   },
   pt: {
     // Nav & General
@@ -700,7 +952,133 @@ const translations = {
     on_shift: 'em turno',
     
     // Upgrade
-    pro_exclusive: 'Módulo Exclusivo 👑 PRO'
+    pro_exclusive: 'Módulo Exclusivo 👑 PRO',
+
+    // Cash Management
+    cash_management: 'Caixa (Dinheiro)',
+    open_cash: 'Abrir Caixa',
+    close_cash: 'Fechar Caixa',
+    open_btn: 'Abrir',
+    initial_amount: 'Valor Inicial',
+    cash_session_active: 'Sessão de Caixa Ativa',
+    no_active_session: 'Sem sessão de caixa ativa',
+    open_cash_to_start: 'Abra o caixa para começar a registrar movimentações.',
+    withdrawal: 'Retirada',
+    deposit: 'Depósito',
+    payment: 'Pagamento',
+    new_withdrawal: 'Nova Retirada',
+    new_deposit: 'Novo Depósito',
+    amount: 'Valor',
+    concept: 'Conceito',
+    movements: 'Movimentações',
+    no_movements: 'Sem movimentações registradas',
+    close_cash_confirm: 'Fechar sessão de caixa?',
+    closing_balance: 'Saldo de Fechamento',
+
+    // Orders History
+    orders_history: 'Histórico de Contas',
+    orders_history_desc: 'Todas as contas processadas',
+    correct_payment: 'Corrigir Pagamento',
+    cash_word: 'Dinheiro',
+    card_word: 'Cartão',
+    paid: 'Pago',
+    cancelled: 'Cancelado',
+
+    // Invoicing
+    invoicing: 'Faturação',
+    invoicing_auto: 'Faturação Automática',
+    invoicing_electronic: 'Faturação Eletrônica',
+    invoicing_desc: 'Histórico de solicitações de faturas de clientes',
+    invoicing_promo: 'Permita que seus clientes gerem sua própria fatura digitalizando seu ticket. Economize horas de trabalho administrativo.',
+    discover_pro: 'Descobrir Versão PRO',
+    search_rfc: 'Buscar CNPJ ou Razão Social...',
+    filter: 'Filtrar',
+    invoice_id: 'ID Fatura',
+    request_date: 'Data da Solicitação',
+    fiscal_data: 'Dados Fiscais',
+    ticket_word: 'Ticket',
+    amount_word: 'Valor',
+    status_word: 'Status',
+    stamped: 'Carimbada',
+    pending_word: 'Pendente',
+    sat_error: 'Erro Fiscal',
+    no_invoices: 'Nenhuma solicitação de fatura registrada.',
+
+    // Invoice Portal (public)
+    invoice_portal_title: 'Faturação Eletrônica',
+    powered_by: 'Desenvolvido por Serve POS',
+    consumption_summary: 'Resumo do Consumo',
+    fiscal_details: 'Seus Dados Fiscais',
+    rfc: 'CNPJ',
+    business_name: 'Razão Social',
+    postal_code: 'CEP',
+    cfdi_use: 'Uso CFDI',
+    fiscal_regime: 'Regime Fiscal',
+    delivery_email: 'Email de envio',
+    generate_invoice: 'Gerar Fatura Agora',
+    secure_connection: 'Conexão segura e criptografada',
+    invoice_generated: 'Fatura Gerada!',
+    invoice_sent_msg: 'Sua fatura foi carimbada com sucesso e enviada para',
+    receive_soon: 'Você deve recebê-la nos próximos minutos.',
+    sat_status: 'Status Fiscal',
+    stamp_success: 'Carimbagem Bem-sucedida',
+    need_invoice: 'Precisa de fatura?',
+    invoice_scan_msg: 'Gere sua fatura em 3 segundos digitalizando o código QR ou acessando:',
+
+    // Franchise / HQ
+    franchise_hq: 'Central HQ',
+    active_branches: 'Filiais Ativas',
+    branch: 'Filial',
+    branches_can_edit: 'Filiais podem editar cardápio',
+    strict_global_menu: 'Cardápio Global Estrito',
+
+    // Order Ticket extras
+    transfer_table: 'Transferir Mesa',
+    reopen_bill: 'Reabrir Conta',
+    print_bill: 'Imprimir Conta',
+    bill_printed_locked: 'A conta já está impressa e bloqueada. Para adicionar itens, clique em "Reabrir Conta".',
+    bill_printed_modify: 'A conta está impressa. Você deve reabri-la para modificar.',
+
+    // Receipt Modal
+    payment_method: 'Método de Pagamento',
+    debit_credit_card: 'Cartão de Débito/Crédito',
+    cash_received: 'Dinheiro Recebido',
+    change_given: 'Troco Entregue',
+    print_receipt: 'Imprimir Recibo',
+    close_btn: 'Fechar',
+    finish_order: 'Finalizar Pedido',
+
+    // Checkout Modal
+    cash_payment: 'Dinheiro',
+    card_payment: 'Cartão',
+    cash_received_label: 'Dinheiro Recebido',
+
+    // Z Report
+    print_z_report: 'Imprimir Relatório Z',
+    close_shift: 'Fechar Turno',
+
+    // Dashboard (new)
+    income_trend: 'Tendência de Renda',
+    sales_by_day: 'Comportamento de vendas por dia',
+    payment_methods: 'Métodos de Pagamento',
+    payment_dist_30d: 'Distribuição dos últimos 30 dias',
+    no_payment_data: 'Sem dados de pagamento',
+    peak_hours: 'Horários de Pico (Mapa de Calor)',
+    last_30_days: 'Últimos 30 dias',
+    peak_hours_desc: 'Identifique os dias e horários com maior fluxo de clientes para otimizar sua equipe.',
+    not_enough_data: 'Dados insuficientes para o mapa de calor',
+    orders_count: 'Pedidos',
+    units: 'unids.',
+    top_n: 'Top',
+    dashboard_control: 'Controle total sobre os números do seu restaurante.',
+
+    // Admin Layout sidebar
+    sidebar_cash: 'Caixa (Dinheiro)',
+    sidebar_orders: 'Histórico de Contas',
+    sidebar_invoicing: 'Faturação',
+
+    // Subscription banner
+    subscription_alert: 'Alerta de Assinatura'
   }
 };
 

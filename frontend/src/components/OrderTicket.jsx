@@ -196,7 +196,7 @@ export default function OrderTicket({
                 className="w-full flex items-center justify-center space-x-2 py-2 text-sm font-bold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-blue-900/30 rounded-xl transition-colors"
               >
                 {isFreemium ? <Crown className="w-4 h-4 text-amber-500" /> : <ArrowRightLeft className="w-4 h-4" />}
-                <span>Mudar de Mesa</span>
+                <span>{t('transfer_table')}</span>
               </button>
             </div>
           )}
@@ -212,7 +212,7 @@ export default function OrderTicket({
                 className="w-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold py-4 rounded-[1.25rem] transition-all flex items-center justify-center space-x-3 shadow-inner"
               >
                 {isFreemium ? <Crown className="w-6 h-6 text-amber-500" /> : <Unlock className="w-6 h-6" />}
-                <span className="text-lg">Reabrir Cuenta</span>
+                <span className="text-lg">{t('reopen_bill')}</span>
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.02 }}
@@ -245,7 +245,7 @@ export default function OrderTicket({
                 className="w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-4 rounded-[1.25rem] shadow-[0_8px_20px_rgba(0,0,0,0.2)] transition-all flex items-center justify-center space-x-3 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
               >
                 <Printer className="w-6 h-6" />
-                <span className="text-lg">Imprimir Cuenta</span>
+                <span className="text-lg">{t('print_bill')}</span>
               </motion.button>
               <motion.button 
                 whileHover={{ scale: orderItems.length > 0 ? 1.02 : 1 }}
