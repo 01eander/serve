@@ -204,6 +204,11 @@ export default function POS() {
   const activeTable = tables.find(t => t.id === activeTableId);
 
   const handleLogin = (user) => {
+    try {
+      sessionStorage.setItem('loggedInWaiter', JSON.stringify(user));
+    } catch (e) {
+      console.error(e);
+    }
     if (user.role === 'admin') {
       const onboardingKey = `onboarding_completed_${company?.id}`;
       const isCompleted = localStorage.getItem(onboardingKey);
@@ -214,11 +219,6 @@ export default function POS() {
         navigate('/admin');
       }
     } else {
-      try {
-        sessionStorage.setItem('loggedInWaiter', JSON.stringify(user));
-      } catch (e) {
-        console.error(e);
-      }
       setLoggedInWaiter(user);
     }
   };
