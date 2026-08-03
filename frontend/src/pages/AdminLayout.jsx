@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText, Compass } from 'lucide-react';
 import ThemeLangToggles from '../components/ThemeLangToggles';
 import ProUpgradeModal from '../components/ProUpgradeModal';
+import OnboardingTourModal from '../components/OnboardingTourModal';
 import SubscriptionAlertBanner from '../components/SubscriptionAlertBanner';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -17,6 +18,16 @@ export default function AdminLayout() {
   const { theme } = useTheme();
   const { company } = useCompany();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showOnboardingTour, setShowOnboardingTour] = useState(false);
+
+  useEffect(() => {
+    if (company?.id) {
+      const isCompleted = localStorage.getItem(`onboarding_completed_${company.id}`);
+      if (!isCompleted) {
+        setShowOnboardingTour(true);
+      }
+    }
+  }, [company?.id]);
 
   const isFreemium = company?.plan !== 'pro';
 
@@ -103,6 +114,15 @@ export default function AdminLayout() {
               </button>
             )}
 
+            {/* Restart Virtual Tour Button */}
+            <button
+              onClick={() => setShowOnboardingTour(true)}
+              className="w-full py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs rounded-xl border border-indigo-200 dark:border-indigo-800/60 transition-all flex items-center justify-center space-x-1.5 active:scale-95"
+            >
+              <Compass className="w-3.5 h-3.5 text-indigo-500" />
+              <span>{t('onboarding_restart')}</span>
+            </button>
+
             <ThemeLangToggles />
             <Link to="/" className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
               <Store className="w-4 h-4" />
@@ -148,6 +168,12 @@ export default function AdminLayout() {
       <ProUpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
+      />
+
+      {/* Onboarding Interactive Tour Modal */}
+      <OnboardingTourModal
+        isOpen={showOnboardingTour}
+        onClose={() => setShowOnboardingTour(false)}
       />
     </div>
   );

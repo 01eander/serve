@@ -152,6 +152,52 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Reset Admin/User PIN using Company Password
+router.post('/reset-admin-pin', async (req, res) => {
+  const { company_id, password, new_pin, user_id } = req.body;
+
+  if (!company_id || !password || !new_pin) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios (empresa, contraseña, nuevo PIN)' });
+  }
+
+  if (new_pin.length !== 4 || !/^\d{4}$/.test(new_pin)) {
+    return res.status(400).json({ error: 'El PIN debe ser exactamente de 4 dígitos numéricos' });
+  }
+
+  try {
+    // 1. Verify company password
+    const compRes = await pool.query('SELECT * FROM companies WHERE id = $1 AND password = $2', [company_id, password]);
+    if (compRes.rows.length === 0) {
+      return res.status(401).json({ error: 'Contraseña de la empresa incorrecta. No se puede autorizar el cambio de PIN.' });
+    }
+
+    // 2. Update user PIN (either specific user or first admin user for the company)
+    let updateRes;
+    if (user_id) {
+      updateRes = await pool.query(
+        'UPDATE users SET pin = $1 WHERE id = $2 AND company_id = $3 RETURNING *',
+        [new_pin, user_id, company_id]
+      );
+    } else {
+      updateRes = await pool.query(
+        'UPDATE users SET pin = $1 WHERE company_id = $2 AND role = \'admin\' RETURNING *',
+        [new_pin, company_id]
+      );
+    }
+
+    if (updateRes.rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontró el usuario a actualizar' });
+    }
+
+    res.json({
+      message: '¡PIN restablecido con éxito!',
+      user: updateRes.rows[0]
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Ensure logo, address, ticket_footer_phrase columns exist
 pool.query('ALTER TABLE companies ADD COLUMN IF NOT EXISTS logo TEXT').catch(console.error);
 pool.query('ALTER TABLE companies ADD COLUMN IF NOT EXISTS address TEXT').catch(console.error);

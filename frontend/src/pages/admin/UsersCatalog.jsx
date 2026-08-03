@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Loader2, X, Check, Power } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, X, Check, Power, Eye, EyeOff, RotateCcw, KeyRound } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -15,6 +15,7 @@ export default function UsersCatalog() {
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({ name: '', role: 'mesero', pin: '', active: true });
+  const [showPinText, setShowPinText] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -35,12 +36,13 @@ export default function UsersCatalog() {
   };
 
   const handleOpenModal = (user = null) => {
+    setShowPinText(false);
     if (user) {
       setEditingUser(user);
       setFormData({ name: user.name, role: user.role, pin: user.pin, active: user.active });
     } else {
       setEditingUser(null);
-      setFormData({ name: '', role: '', pin: '', active: true });
+      setFormData({ name: '', role: 'mesero', pin: '', active: true });
     }
     setShowModal(true);
   };
@@ -48,6 +50,7 @@ export default function UsersCatalog() {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingUser(null);
+    setShowPinText(false);
   };
 
   const handleSave = async (e) => {
@@ -198,18 +201,40 @@ export default function UsersCatalog() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">{t('pin_4_digits')}</label>
-                  <input 
-                    type="password" 
-                    name="new_user_pin_catalog"
-                    autoComplete="new-password"
-                    required
-                    maxLength={4}
-                    value={formData.pin}
-                    onChange={e => setFormData({...formData, pin: e.target.value})}
-                    className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-slate-900 dark:text-white font-mono font-bold transition-all"
-                    placeholder="••••"
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">{t('pin_4_digits')}</label>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, pin: '1234' })}
+                      className="text-[11px] font-extrabold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center space-x-1"
+                      title={t('reset_to_default_pin')}
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>{t('reset_to_default_pin')}</span>
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input 
+                      type={showPinText ? 'text' : 'password'} 
+                      name="new_user_pin_catalog"
+                      autoComplete="new-password"
+                      required
+                      maxLength={4}
+                      inputMode="numeric"
+                      value={formData.pin}
+                      onChange={e => setFormData({...formData, pin: e.target.value.replace(/\D/g, '')})}
+                      className="w-full p-3 pr-10 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 text-slate-900 dark:text-white font-mono font-bold transition-all"
+                      placeholder="••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPinText(!showPinText)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
+                      title={showPinText ? t('hide_pin') : t('show_pin')}
+                    >
+                      {showPinText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
               

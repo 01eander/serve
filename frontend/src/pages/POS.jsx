@@ -204,7 +204,14 @@ export default function POS() {
 
   const handleLogin = (user) => {
     if (user.role === 'admin') {
-      navigate('/admin');
+      const onboardingKey = `onboarding_completed_${company?.id}`;
+      const isCompleted = localStorage.getItem(onboardingKey);
+      // By default or on first use, go to Caja (/admin/cash)
+      if (!isCompleted || company?.plan !== 'pro') {
+        navigate('/admin/cash');
+      } else {
+        navigate('/admin');
+      }
     } else {
       try {
         sessionStorage.setItem('loggedInWaiter', JSON.stringify(user));

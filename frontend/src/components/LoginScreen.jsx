@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, ArrowRight, Building2, LogOut, Sparkles } from 'lucide-react';
+import { User, Lock, ArrowRight, Building2, LogOut, Sparkles, Info, X, KeyRound, Loader2, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeLangToggles from './ThemeLangToggles';
 import CompanyAuthModal from './CompanyAuthModal';
@@ -19,7 +19,65 @@ export default function LoginScreen({ users, onLogin }) {
   const { t } = useLanguage();
   const { theme } = useTheme();
 
+  const pinNoticeKey = `pin_notice_dismissed_${company?.id}`;
+  const [showPinNotice, setShowPinNotice] = useState(() => {
+    return !localStorage.getItem(pinNoticeKey);
+  });
+
+  const dismissPinNotice = () => {
+    setShowPinNotice(false);
+    if (company?.id) {
+      localStorage.setItem(pinNoticeKey, 'true');
+    }
+  };
+
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetCompPassword, setResetCompPassword] = useState('');
+  const [resetNewPin, setResetNewPin] = useState('1234');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState('');
+  const [resetSuccess, setResetSuccess] = useState('');
+
   const isDemoCompany = company?.email === 'demo@oleander.com' || company?.id === 1;
+
+  const handleResetPinSubmit = async (e) => {
+    e.preventDefault();
+    setResetError('');
+    setResetSuccess('');
+    setResetLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:3000/api/companies/reset-admin-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: company.id,
+          password: resetCompPassword,
+          new_pin: resetNewPin,
+          user_id: selectedWaiter?.id
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || t('invalid_company_password'));
+
+      if (selectedWaiter) {
+        selectedWaiter.pin = resetNewPin;
+      }
+      setPin(resetNewPin);
+      setError('');
+      setResetSuccess(t('reset_pin_success'));
+      setTimeout(() => {
+        setShowResetModal(false);
+        setResetCompPassword('');
+        setResetSuccess('');
+      }, 1200);
+    } catch (err) {
+      setResetError(err.message);
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   // If no company is authenticated, render the SaaS Company Auth Modal
   if (!company) {
@@ -39,6 +97,7 @@ export default function LoginScreen({ users, onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedWaiter && pin === selectedWaiter.pin) {
+      dismissPinNotice();
       onLogin(selectedWaiter);
     } else {
       setError(t('incorrect_pin'));
@@ -182,17 +241,40 @@ export default function LoginScreen({ users, onLogin }) {
                         type="text"
                         inputMode="numeric"
                         autoComplete="off"
-                        style={{ WebkitTextSecurity: 'disc' }}
+                        style={{ WebkitTextSecurity: 'disc', color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
                         value={pin}
                         onChange={(e) => handlePinChange(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(e); }}
                         placeholder="••••"
                         maxLength={4}
-                        style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
                         className="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-300 focus:border-primary-500 rounded-2xl text-3xl tracking-[1em] text-center font-black outline-none transition-all text-slate-900 shadow-inner"
                         autoFocus
                       />
                     </div>
+
+                    {/* One-time default PIN notice for new users/companies */}
+                    {showPinNotice && selectedWaiter && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3 text-left p-3.5 bg-blue-500/15 dark:bg-blue-500/20 border border-blue-400/40 dark:border-blue-500/40 rounded-2xl flex items-center justify-between shadow-sm"
+                      >
+                        <div className="flex items-center space-x-2.5 pr-2">
+                          <Info className="w-5 h-5 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                          <p className="text-xs font-extrabold text-slate-700 dark:text-slate-200 leading-tight">
+                            {t('pin_default_notice')}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={dismissPinNotice}
+                          className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors rounded-lg flex-shrink-0"
+                          title="Cerrar aviso"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </motion.div>
+                    )}
 
                     {/* Demo PIN Tip below input */}
                     {isDemoCompany && selectedWaiter && (
@@ -220,6 +302,22 @@ export default function LoginScreen({ users, onLogin }) {
                         {error}
                       </motion.p>
                     )}
+
+                    {/* Forgot PIN link */}
+                    <div className="mt-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowResetModal(true);
+                          setResetError('');
+                          setResetSuccess('');
+                        }}
+                        className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-primary-500 dark:hover:text-primary-400 underline transition-colors"
+                      >
+                        {t('forgot_pin')}
+                      </button>
+                    </div>
+
                     <div className="flex space-x-4 mt-6">
                       <button
                         type="button"
@@ -271,6 +369,107 @@ export default function LoginScreen({ users, onLogin }) {
           className="h-20 sm:h-32 w-auto max-w-sm sm:max-w-md object-contain mix-blend-screen drop-shadow-2xl transition-all duration-300"
         />
       </motion.div>
+
+      {/* Reset Admin PIN Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-white space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center space-x-3">
+                <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-2xl border border-amber-500/30">
+                  <KeyRound className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base text-white">{t('reset_pin_title')}</h3>
+                  <p className="text-xs text-slate-400">{company?.name}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowResetModal(false)}
+                className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800/60 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 font-medium leading-relaxed">
+              {t('reset_pin_desc')}
+            </p>
+
+            <form onSubmit={handleResetPinSubmit} className="space-y-4">
+              {resetError && (
+                <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs font-bold rounded-xl">
+                  ⚠️ {resetError}
+                </div>
+              )}
+              {resetSuccess && (
+                <div className="p-3 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-bold rounded-xl flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span>{resetSuccess}</span>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-300 uppercase tracking-wider mb-1">
+                  {t('company_password_label')}
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={resetCompPassword}
+                  onChange={(e) => setResetCompPassword(e.target.value)}
+                  placeholder="••••••••"
+                  style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                  className="w-full p-3 bg-white border border-slate-300 rounded-xl outline-none focus:border-primary-500 text-slate-900 text-sm font-bold"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-extrabold text-slate-300 uppercase tracking-wider">
+                    {t('new_pin_label')}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setResetNewPin('1234')}
+                    className="text-[11px] font-extrabold text-amber-400 hover:underline"
+                  >
+                    {t('reset_to_default_pin')} (1234)
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  required
+                  maxLength={4}
+                  inputMode="numeric"
+                  value={resetNewPin}
+                  onChange={(e) => setResetNewPin(e.target.value.replace(/\D/g, ''))}
+                  placeholder="1234"
+                  style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a' }}
+                  className="w-full p-3 bg-white border border-slate-300 rounded-xl outline-none focus:border-primary-500 text-slate-900 text-center font-mono font-black text-xl tracking-[0.5em]"
+                />
+              </div>
+
+              <div className="flex space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(false)}
+                  className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors"
+                >
+                  {t('cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="flex-1 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2"
+                >
+                  {resetLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>{t('save')} PIN</span>}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
