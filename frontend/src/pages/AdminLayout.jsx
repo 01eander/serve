@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText, Compass } from 'lucide-react';
+import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText, Compass, Menu, X } from 'lucide-react';
 import ThemeLangToggles from '../components/ThemeLangToggles';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import OnboardingTourModal from '../components/OnboardingTourModal';
@@ -19,6 +19,11 @@ export default function AdminLayout() {
   const { company } = useCompany();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showOnboardingTour, setShowOnboardingTour] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (company?.id) {
@@ -51,9 +56,53 @@ export default function AdminLayout() {
       {/* Top Automated Monthly Subscription Alert Banner */}
       <SubscriptionAlertBanner />
 
-      <div className="flex flex-1 overflow-hidden">
+      {/* Mobile Top Header Bar */}
+      <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm z-20 shrink-0">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active:scale-95"
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+          <div className="flex items-center space-x-2">
+            <div className="bg-slate-900 dark:bg-slate-950 text-white p-1.5 rounded-lg border border-slate-700/50 shadow-sm">
+              <img src={smallLogo} alt="Serve Icon" className="w-5 h-5 object-contain" />
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">Admin Portal</h1>
+              <span className="text-[10px] text-primary-600 dark:text-primary-400 font-extrabold block truncate max-w-[120px]">
+                {company?.name || 'Oleander Serve'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center space-x-1.5">
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black shadow-sm ${
+            company?.plan === 'pro' 
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' 
+              : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+          }`}>
+            <Sparkles className="w-2.5 h-2.5 mr-1" />
+            <span>{company?.plan === 'pro' ? 'PRO' : 'FREE'}</span>
+          </span>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Overlay Backdrop */}
+        {mobileMenuOpen && (
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-30 md:hidden transition-opacity"
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col shadow-sm z-10 transition-colors">
+        <aside className={`fixed md:relative inset-y-0 left-0 z-40 w-72 md:w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col shadow-xl md:shadow-sm transition-transform duration-300 ease-in-out ${
+          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}>
           <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
             <div className="flex items-center space-x-3">
               <div className="bg-slate-900 dark:bg-slate-950 text-white p-2 rounded-xl border border-slate-700/50 shadow-md">
@@ -76,6 +125,12 @@ export default function AdminLayout() {
                 </div>
               </div>
             </div>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -88,6 +143,7 @@ export default function AdminLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 px-3 py-3 rounded-xl transition-all font-medium ${
                     isActive 
                       ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-bold' 
@@ -106,7 +162,7 @@ export default function AdminLayout() {
             {/* Upgrade PRO Banner for Freemium Companies */}
             {isFreemium && (
               <button
-                onClick={() => setShowUpgradeModal(true)}
+                onClick={() => { setShowUpgradeModal(true); setMobileMenuOpen(false); }}
                 className="w-full p-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center space-x-1.5 active:scale-95"
               >
                 <Sparkles className="w-4 h-4 animate-bounce" />
@@ -116,7 +172,7 @@ export default function AdminLayout() {
 
             {/* Restart Virtual Tour Button */}
             <button
-              onClick={() => setShowOnboardingTour(true)}
+              onClick={() => { setShowOnboardingTour(true); setMobileMenuOpen(false); }}
               className="w-full py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs rounded-xl border border-indigo-200 dark:border-indigo-800/60 transition-all flex items-center justify-center space-x-1.5 active:scale-95"
             >
               <Compass className="w-3.5 h-3.5 text-indigo-500" />
@@ -124,7 +180,7 @@ export default function AdminLayout() {
             </button>
 
             <ThemeLangToggles />
-            <Link to="/" className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
               <Store className="w-4 h-4" />
               <span>{t('back_to_pos')}</span>
             </Link>
@@ -159,7 +215,7 @@ export default function AdminLayout() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/50">
+        <main className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/50 w-full min-w-0">
           <Outlet />
         </main>
       </div>

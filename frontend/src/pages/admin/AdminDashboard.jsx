@@ -169,7 +169,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-8 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300 relative overflow-hidden">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-300 relative overflow-hidden">
       
       {/* PRO Lockout Overlay for Freemium Dashboard */}
       {isFreemium && (
