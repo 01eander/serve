@@ -41,31 +41,31 @@ export default function InitialCurrencySetupModal({ onComplete }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/90 backdrop-blur-2xl animate-in fade-in duration-300 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl overflow-hidden text-white"
+        className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden text-white my-auto max-h-[90vh] flex flex-col"
       >
-        <div className="p-8 pb-6 text-center bg-gradient-to-b from-primary-950/60 to-transparent border-b border-slate-800">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/25">
-            <Globe className="w-8 h-8 text-white" />
+        <div className="p-5 sm:p-8 pb-4 sm:pb-6 text-center bg-gradient-to-b from-primary-950/60 to-transparent border-b border-slate-800 shrink-0">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/25">
+            <Globe className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
           <span className="px-3 py-1 bg-amber-500/20 text-amber-300 font-extrabold text-xs rounded-full uppercase tracking-wider inline-flex items-center space-x-1.5 mb-2">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Configuración Inicial Obligatoria</span>
           </span>
-          <h2 className="text-2xl font-black tracking-tight text-white">¡Bienvenido, {company?.name}!</h2>
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">¡Bienvenido, {company?.name}!</h2>
           <p className="text-xs text-slate-400 font-medium mt-1">Antes de comenzar a operar, selecciona la moneda local y la tasa de impuestos de tu establecimiento.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-5 sm:space-y-6 overflow-y-auto flex-1">
           {/* Currency Selection Grid */}
           <div>
             <label className="block text-xs font-extrabold text-slate-300 uppercase tracking-wider mb-3">
               Moneda Principal del Establecimiento
             </label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
               {CURRENCIES.map((c) => {
                 const isSelected = selectedCurrency === c.code;
                 return (
@@ -115,7 +115,7 @@ export default function InitialCurrencySetupModal({ onComplete }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-xl shadow-amber-500/25 transition-all flex items-center justify-center space-x-2 text-sm"
+            className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black rounded-2xl shadow-xl shadow-amber-500/25 transition-all flex items-center justify-center space-x-2 text-sm shrink-0"
           >
             <Check className="w-5 h-5" />
             <span>Guardar Configuración y Continuar</span>
