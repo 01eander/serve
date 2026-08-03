@@ -3,10 +3,13 @@ import { Building2, DollarSign, Users, Store, LineChart, Loader2, ArrowUpRight }
 import { useCompany } from '../../contexts/CompanyContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 
 export default function FranchiseHQ() {
   const { company, companyFetch } = useCompany();
   const { formatCurrency } = useCurrency();
+  const { t } = useLanguage();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +21,7 @@ export default function FranchiseHQ() {
 
   const fetchStats = async () => {
     try {
-      const res = await companyFetch(`http://localhost:3000/api/companies/${company.id}/franchise/stats`);
+      const res = await companyFetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/stats`);
       if (res.ok) {
         const data = await res.json();
         setStats(data);

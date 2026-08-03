@@ -7,6 +7,7 @@ import InitialCurrencySetupModal from './InitialCurrencySetupModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useCompany } from '../contexts/CompanyContext';
+import { API_BASE_URL } from '../config/api';
 import serveLogo from '../images/SERVE_Logo.png';
 import oleanderLogoBlack from '../images/oleander_logo_black.png.png';
 import oleanderLogoWhite from '../images/oleander_logo_white.png.png';
@@ -47,7 +48,7 @@ export default function LoginScreen({ users, onLogin }) {
     setResetLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/companies/reset-admin-pin', {
+      const res = await fetch(`${API_BASE_URL}/api/companies/reset-admin-pin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

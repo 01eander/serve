@@ -32,7 +32,7 @@ export default function MenuArea({ categories, menuItems, onAddToOrder, onBackTo
   const { theme } = useTheme();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/promotions')
+    fetch(`${API_BASE_URL}/api/promotions`)
       .then(res => res.json())
       .then(data => setPromotions(data.filter(p => p.active)))
       .catch(err => console.error('Error fetching promotions in POS:', err));

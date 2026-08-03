@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon, X, Check, Power } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 
 export default function MenuCatalog() {
   const { t } = useLanguage();
@@ -32,7 +33,7 @@ export default function MenuCatalog() {
   const fetchMenu = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/menu');
+      const res = await fetch(`${API_BASE_URL}/api/menu`);
       if (!res.ok) throw new Error('Error fetching menu');
       const data = await res.json();
       setCategories(data.categories);
@@ -71,7 +72,7 @@ export default function MenuCatalog() {
   const handleSaveItem = async (e) => {
     e.preventDefault();
     try {
-      const url = editingItem ? `http://localhost:3000/api/menu/items/${editingItem.id}` : 'http://localhost:3000/api/menu/items';
+      const url = editingItem ? `${API_BASE_URL}/api/menu/items/${editingItem.id}` : `${API_BASE_URL}/api/menu/items`;
       const method = editingItem ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -100,7 +101,7 @@ export default function MenuCatalog() {
   const handleToggleItemStatus = async (item) => {
     if (!confirm(`¿Estás seguro de ${item.active ? 'agotar' : 'activar'} ${item.name}?`)) return;
     try {
-      await fetch(`http://localhost:3000/api/menu/items/${item.id}`, {
+      await fetch(`${API_BASE_URL}/api/menu/items/${item.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...item, active: !item.active })
@@ -126,7 +127,7 @@ export default function MenuCatalog() {
   const handleSaveCat = async (e) => {
     e.preventDefault();
     try {
-      const url = editingCat ? `http://localhost:3000/api/menu/categories/${editingCat.id}` : 'http://localhost:3000/api/menu/categories';
+      const url = editingCat ? `${API_BASE_URL}/api/menu/categories/${editingCat.id}` : `${API_BASE_URL}/api/menu/categories`;
       const method = editingCat ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -155,7 +156,7 @@ export default function MenuCatalog() {
   const handleToggleCatStatus = async (cat) => {
     if (!confirm(`¿Estás seguro de ${cat.active ? 'ocultar' : 'activar'} la categoría ${cat.name}?`)) return;
     try {
-      await fetch(`http://localhost:3000/api/menu/categories/${cat.id}`, {
+      await fetch(`${API_BASE_URL}/api/menu/categories/${cat.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...cat, active: !cat.active })

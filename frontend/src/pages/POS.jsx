@@ -11,6 +11,7 @@ import TransferTableModal from '../components/TransferTableModal';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import { useCompany } from '../contexts/CompanyContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../config/api';
 
 export default function POS() {
   const { company, companyFetch } = useCompany();
@@ -66,10 +67,10 @@ export default function POS() {
       try {
         if (!isPolling) setLoading(true);
         const [usersRes, tablesRes, menuRes, ordersRes] = await Promise.all([
-          companyFetch('http://localhost:3000/api/users'),
-          companyFetch('http://localhost:3000/api/tables'),
-          companyFetch('http://localhost:3000/api/menu'),
-          companyFetch('http://localhost:3000/api/orders/active')
+          companyFetch(`${API_BASE_URL}/api/users`),
+          companyFetch(`${API_BASE_URL}/api/tables`),
+          companyFetch(`${API_BASE_URL}/api/menu`),
+          companyFetch(`${API_BASE_URL}/api/orders/active`)
         ]);
         
         const usersData = await usersRes.json();
@@ -339,7 +340,7 @@ export default function POS() {
     setOrderStatuses(prev => ({ ...prev, [activeTableId]: 'in_kitchen' }));
     
     try {
-      await fetch('http://localhost:3000/api/orders', {
+      await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -363,7 +364,7 @@ export default function POS() {
 
   const handleCheckoutConfirm = async (checkoutDetails) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/pay`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/table/${activeTableId}/pay`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -425,7 +426,7 @@ export default function POS() {
 
   const handlePrintBill = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/print`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/table/${activeTableId}/print`, {
         method: 'PATCH',
         headers: { 'x-company-id': company?.id?.toString() || '1' }
       });
@@ -454,7 +455,7 @@ export default function POS() {
 
   const handleReopenBill = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/reopen`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/table/${activeTableId}/reopen`, {
         method: 'PATCH',
         headers: { 'x-company-id': company?.id?.toString() || '1' }
       });
@@ -477,7 +478,7 @@ export default function POS() {
 
   const handleTransferTable = async (newTableId) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/transfer`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/table/${activeTableId}/transfer`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',
@@ -542,7 +543,7 @@ export default function POS() {
 
   const handleTakeControl = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/table/${activeTableId}/transfer-waiter`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/table/${activeTableId}/transfer-waiter`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

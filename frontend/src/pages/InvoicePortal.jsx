@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Receipt, CheckCircle2, ChevronRight, FileText, Mail, ShieldCheck, Zap } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../config/api';
 
 export default function InvoicePortal() {
   const { orderId } = useParams();
@@ -43,7 +44,7 @@ export default function InvoicePortal() {
 
   const fetchOrderDetails = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/invoices/order/${orderId}`);
+      const res = await fetch(`${API_BASE_URL}/api/invoices/order/${orderId}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al cargar datos');
       setOrder(data.order);
@@ -65,7 +66,7 @@ export default function InvoicePortal() {
     setError(null);
 
     try {
-      const res = await fetch('http://localhost:3000/api/invoices/request', {
+      const res = await fetch(`${API_BASE_URL}/api/invoices/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, ...formData })

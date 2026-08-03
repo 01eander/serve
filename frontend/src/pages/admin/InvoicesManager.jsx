@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Search, Filter, AlertCircle, CheckCircle2, Clock, FileWarning, ExternalLink, Download } from 'lucide-react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 
 export default function InvoicesManager() {
@@ -26,7 +27,7 @@ export default function InvoicesManager() {
   const fetchInvoices = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/invoices', {
+      const res = await fetch(`${API_BASE_URL}/api/invoices`, {
         headers: {
           'x-company-id': company.id
         }

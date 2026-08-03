@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, X, Check, Power, Eye, EyeOff, RotateCcw, KeyRound } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 
 export default function UsersCatalog() {
   const { t } = useLanguage();
@@ -24,7 +25,7 @@ export default function UsersCatalog() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/users');
+      const res = await fetch(`${API_BASE_URL}/api/users`);
       if (!res.ok) throw new Error('Error fetching users');
       const data = await res.json();
       setUsers(data);
@@ -56,7 +57,7 @@ export default function UsersCatalog() {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const url = editingUser ? `http://localhost:3000/api/users/${editingUser.id}` : 'http://localhost:3000/api/users';
+      const url = editingUser ? `${API_BASE_URL}/api/users/${editingUser.id}` : `${API_BASE_URL}/api/users`;
       const method = editingUser ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -86,7 +87,7 @@ export default function UsersCatalog() {
   const handleToggleStatus = async (user) => {
     if (!confirm(`¿Estás seguro de ${user.active ? 'inactivar' : 'activar'} a ${user.name}?`)) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...user, active: !user.active })

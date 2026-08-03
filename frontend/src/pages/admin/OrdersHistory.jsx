@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useCurrency } from '../../contexts/CurrencyContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Receipt, RefreshCw, CreditCard, Banknote, Edit3, X, AlertCircle, Crown } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
+import { API_BASE_URL } from '../../config/api';
 
 export default function OrdersHistory() {
   const { company } = useCompany();
+  const { t } = useLanguage();
   const { formatCurrency } = useCurrency();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,7 @@ export default function OrdersHistory() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('http://localhost:3000/api/orders/history', {
+      const res = await fetch(`${API_BASE_URL}/api/orders/history`, {
         headers: { 'x-company-id': company?.id || '1' }
       });
       if (!res.ok) throw new Error('Error al obtener el historial de cuentas');
@@ -59,7 +62,7 @@ export default function OrdersHistory() {
     setActionLoading(true);
     setModalError(null);
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/${editingOrder.id}/payment-method`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${editingOrder.id}/payment-method`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

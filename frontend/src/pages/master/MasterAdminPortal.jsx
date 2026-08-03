@@ -3,6 +3,7 @@ import { ShieldCheck, Building2, Utensils, Users, LayoutGrid, FileText, Search, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCompany } from '../../contexts/CompanyContext';
+import { API_BASE_URL } from '../../config/api';
 import oleanderLogoWhite from '../../images/oleander_logo_white.png.png';
 
 export default function MasterAdminPortal() {
@@ -28,7 +29,7 @@ export default function MasterAdminPortal() {
   const fetchMasterStats = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/master/stats');
+      const res = await fetch(`${API_BASE_URL}/api/master/stats`);
       if (res.ok) {
         const json = await res.json();
         setData(json);
@@ -46,7 +47,7 @@ export default function MasterAdminPortal() {
 
   const handleStatusChange = async (companyId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/master/companies/${companyId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${companyId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -62,7 +63,7 @@ export default function MasterAdminPortal() {
   const handlePlanToggle = async (companyId, currentPlan) => {
     const nextPlan = currentPlan === 'pro' ? 'freemium' : 'pro';
     try {
-      const res = await fetch(`http://localhost:3000/api/master/companies/${companyId}/plan`, {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${companyId}/plan`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan: nextPlan })
@@ -77,7 +78,7 @@ export default function MasterAdminPortal() {
 
   const handleRenewCompany = async (companyId) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/master/companies/${companyId}/renew`, {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${companyId}/renew`, {
         method: 'PATCH'
       });
       if (res.ok) {
@@ -93,7 +94,7 @@ export default function MasterAdminPortal() {
     if (!selectedCompany) return;
     setSavingBilling(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/master/companies/${selectedCompany.id}/billing`, {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${selectedCompany.id}/billing`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -117,7 +118,7 @@ export default function MasterAdminPortal() {
     if (!selectedCompanyForPassword || !newPassword) return;
     setSavingPassword(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/master/companies/${selectedCompanyForPassword.id}/password`, {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${selectedCompanyForPassword.id}/password`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: newPassword })

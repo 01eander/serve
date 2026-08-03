@@ -14,6 +14,7 @@ import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useCurrency } from '../../contexts/CurrencyContext';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
 const DAYS_OF_WEEK = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -33,7 +34,7 @@ export default function AdminDashboard() {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/dashboard/stats', {
+      const res = await fetch(`${API_BASE_URL}/api/dashboard/stats`, {
         headers: {
           'x-company-id': company?.id?.toString() || '1'
         }

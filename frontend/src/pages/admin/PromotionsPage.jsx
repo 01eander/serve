@@ -3,6 +3,8 @@ import { Tag, Plus, Pencil, Trash2, Calendar, Clock, Sparkles, Check, X, Power, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCurrency } from '../../contexts/CurrencyContext';
 import { useCompany } from '../../contexts/CompanyContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 
 export default function PromotionsPage() {
@@ -40,8 +42,8 @@ export default function PromotionsPage() {
     try {
       setLoading(true);
       const [promoRes, menuRes] = await Promise.all([
-        fetch('http://localhost:3000/api/promotions'),
-        fetch('http://localhost:3000/api/menu')
+        fetch(`${API_BASE_URL}/api/promotions`),
+        fetch(`${API_BASE_URL}/api/menu`)
       ]);
       if (promoRes.ok) setPromotions(await promoRes.json());
       if (menuRes.ok) {
@@ -93,8 +95,8 @@ export default function PromotionsPage() {
     e.preventDefault();
     try {
       const url = editingPromo 
-        ? `http://localhost:3000/api/promotions/${editingPromo.id}` 
-        : 'http://localhost:3000/api/promotions';
+        ? `${API_BASE_URL}/api/promotions/${editingPromo.id}` 
+        : `${API_BASE_URL}/api/promotions`;
       const method = editingPromo ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -117,7 +119,7 @@ export default function PromotionsPage() {
 
   const handleTogglePromoStatus = async (promo) => {
     try {
-      await fetch(`http://localhost:3000/api/promotions/${promo.id}`, {
+      await fetch(`${API_BASE_URL}/api/promotions/${promo.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ active: !promo.active })
@@ -131,7 +133,7 @@ export default function PromotionsPage() {
   const handleDeletePromo = async (id) => {
     if (!confirm('¿Estás seguro de eliminar esta campaña de descuento?')) return;
     try {
-      await fetch(`http://localhost:3000/api/promotions/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/promotions/${id}`, { method: 'DELETE' });
       fetchData();
     } catch (err) {
       alert(err.message);

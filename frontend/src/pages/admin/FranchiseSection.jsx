@@ -3,6 +3,7 @@ import { Building2, Plus, Save, Shield, Lock, Loader2, Sparkles, Building } from
 import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
+import { API_BASE_URL } from '../../config/api';
 
 export default function FranchiseSection() {
   const { t } = useLanguage();
@@ -31,7 +32,7 @@ export default function FranchiseSection() {
 
   const fetchBranches = async () => {
     try {
-      const res = await companyFetch(`http://localhost:3000/api/companies/${company.id}/branches`);
+      const res = await companyFetch(`${API_BASE_URL}/api/companies/${company.id}/branches`);
       if (res.ok) {
         const data = await res.json();
         setBranches(Array.isArray(data) ? data : []);
@@ -48,7 +49,7 @@ export default function FranchiseSection() {
     }
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/companies/${company.id}/franchise/enable`, {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/enable`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -71,7 +72,7 @@ export default function FranchiseSection() {
     const newValue = !allowChildMenuEdit;
     setAllowChildMenuEdit(newValue);
     try {
-      const res = await fetch(`http://localhost:3000/api/companies/${company.id}/franchise/menu-permissions`, {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/menu-permissions`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ allow_child_menu_edit: newValue })
@@ -89,7 +90,7 @@ export default function FranchiseSection() {
     e.preventDefault();
     setCreatingBranch(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/companies/${company.id}/branches`, {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/branches`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -6,6 +6,7 @@ import ThemeLangToggles from '../components/ThemeLangToggles';
 import { useCompany } from '../contexts/CompanyContext';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../config/api';
 import serveLogo from '../images/SERVE_Logo.png';
 import smallLogo from '../images/small_LOGO.png';
 
@@ -20,7 +21,7 @@ export default function KitchenView() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/orders/active');
+      const res = await fetch(`${API_BASE_URL}/api/orders/active`);
       if (res.ok) {
         const data = await res.json();
         setOrders(Array.isArray(data) ? data : []);
@@ -43,7 +44,7 @@ export default function KitchenView() {
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/${orderId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

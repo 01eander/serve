@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config/api';
 
 const CompanyContext = createContext();
 
@@ -30,7 +31,7 @@ export const CompanyProvider = ({ children }) => {
     if (!company) return;
     try {
       const payload = typeof configData === 'object' ? configData : { currency: configData, tax_rate: taxRateArgs };
-      const res = await fetch(`http://localhost:3000/api/companies/${company.id}/config`, {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/config`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -49,7 +50,7 @@ export const CompanyProvider = ({ children }) => {
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       let [resource, config] = args;
-      if (typeof resource === 'string' && resource.includes('localhost:3000/api')) {
+      if (typeof resource === 'string' && resource.includes('/api')) {
         config = config || {};
         const activeCompany = JSON.parse(localStorage.getItem('active_company') || 'null');
         config.headers = {

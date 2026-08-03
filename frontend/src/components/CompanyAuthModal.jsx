@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCompany } from '../contexts/CompanyContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../config/api';
 import ThemeLangToggles from './ThemeLangToggles';
 import serveLogo from '../images/SERVE_Logo.png';
 import oleanderLogoWhite from '../images/oleander_logo_white.png.png';
@@ -33,7 +34,7 @@ export default function CompanyAuthModal({ onAuthenticated }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/companies/login', {
+      const res = await fetch(`${API_BASE_URL}/api/companies/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, password: loginPassword })
@@ -61,7 +62,7 @@ export default function CompanyAuthModal({ onAuthenticated }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/companies/register', {
+      const res = await fetch(`${API_BASE_URL}/api/companies/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: regName, email: regEmail, password: regPassword })
@@ -87,7 +88,7 @@ export default function CompanyAuthModal({ onAuthenticated }) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3000/api/companies/login', {
+      const res = await fetch(`${API_BASE_URL}/api/companies/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: 'demo@oleander.com', password: 'admin123' })

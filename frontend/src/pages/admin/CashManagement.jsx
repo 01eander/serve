@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useCurrency } from '../../contexts/CurrencyContext'; // Or wherever formatCurrency is
 import { DollarSign, PlusCircle, MinusCircle, Lock, RefreshCw, AlertCircle, ArrowUpCircle, ArrowDownCircle, CheckCircle, Crown } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 
 export default function CashManagement() {
@@ -32,7 +34,7 @@ export default function CashManagement() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(`http://localhost:3000/api/cash/current`, {
+      const res = await fetch(`${API_BASE_URL}/api/cash/current`, {
         headers: { 'x-company-id': company?.id || '1' }
       });
       const data = await res.json();
@@ -61,7 +63,7 @@ export default function CashManagement() {
     e.preventDefault();
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/cash/open`, {
+      const res = await fetch(`${API_BASE_URL}/api/cash/open`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -86,7 +88,7 @@ export default function CashManagement() {
     e.preventDefault();
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/cash/transaction`, {
+      const res = await fetch(`${API_BASE_URL}/api/cash/transaction`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ export default function CashManagement() {
     e.preventDefault();
     setActionLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/cash/close`, {
+      const res = await fetch(`${API_BASE_URL}/api/cash/close`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { API_BASE_URL } from '../../config/api';
 
 export default function TablesCatalog() {
   const { t } = useLanguage();
@@ -23,7 +24,7 @@ export default function TablesCatalog() {
   const fetchTables = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:3000/api/tables');
+      const res = await fetch(`${API_BASE_URL}/api/tables`);
       if (!res.ok) throw new Error('Error fetching tables');
       const data = await res.json();
       setTables(data);
@@ -40,7 +41,7 @@ export default function TablesCatalog() {
       setFormData({ table_number: table.table_number, capacity: table.capacity, status: table.status });
     } else {
       setEditingTable(null);
-      setFormData({ table_number: '', capacity: '', status: 'available' });
+      setFormData({ table_number: '', capacity: 4, status: 'available' });
     }
     setShowModal(true);
   };
@@ -53,7 +54,7 @@ export default function TablesCatalog() {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const url = editingTable ? `http://localhost:3000/api/tables/${editingTable.id}` : 'http://localhost:3000/api/tables';
+      const url = editingTable ? `${API_BASE_URL}/api/tables/${editingTable.id}` : `${API_BASE_URL}/api/tables`;
       const method = editingTable ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -83,7 +84,7 @@ export default function TablesCatalog() {
   const handleDelete = async (table) => {
     if (!confirm(`${t('confirm_delete_table')} ${table.table_number}? ${t('confirm_delete_table_warning')}`)) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/tables/${table.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tables/${table.id}`, {
         method: 'DELETE'
       });
       if (!res.ok) throw new Error('Error deleting table (posiblemente tiene órdenes históricas asociadas)');
