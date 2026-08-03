@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText, Compass, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, UtensilsCrossed, Grid2X2, Settings, Store, Tag, Layers, Building2, Sparkles, Zap, DollarSign, Receipt as ReceiptIcon, FileText, Compass, Menu, X, LogOut } from 'lucide-react';
 import ThemeLangToggles from '../components/ThemeLangToggles';
 import ProUpgradeModal from '../components/ProUpgradeModal';
 import OnboardingTourModal from '../components/OnboardingTourModal';
@@ -180,8 +180,19 @@ export default function AdminLayout() {
             </button>
 
             <ThemeLangToggles />
-            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg">
-              <Store className="w-4 h-4" />
+            <Link 
+              to="/" 
+              onClick={() => {
+                try {
+                  sessionStorage.removeItem('loggedInWaiter');
+                } catch (e) {
+                  console.error(e);
+                }
+                setMobileMenuOpen(false);
+              }} 
+              className="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors p-2 bg-gray-100 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
+            >
+              <LogOut className="w-4 h-4 text-red-500" />
               <span>{t('back_to_pos')}</span>
             </Link>
             

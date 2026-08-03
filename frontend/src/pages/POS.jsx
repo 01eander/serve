@@ -27,7 +27,12 @@ export default function POS() {
   const [loggedInWaiter, setLoggedInWaiter] = useState(() => {
     try {
       const saved = sessionStorage.getItem('loggedInWaiter');
-      return saved ? JSON.parse(saved) : null;
+      const parsed = saved ? JSON.parse(saved) : null;
+      if (parsed?.role === 'admin') {
+        sessionStorage.removeItem('loggedInWaiter');
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }
@@ -204,12 +209,12 @@ export default function POS() {
   const activeTable = tables.find(t => t.id === activeTableId);
 
   const handleLogin = (user) => {
-    try {
-      sessionStorage.setItem('loggedInWaiter', JSON.stringify(user));
-    } catch (e) {
-      console.error(e);
-    }
     if (user.role === 'admin') {
+      try {
+        sessionStorage.removeItem('loggedInWaiter');
+      } catch (e) {
+        console.error(e);
+      }
       const onboardingKey = `onboarding_completed_${company?.id}`;
       const isCompleted = localStorage.getItem(onboardingKey);
       // By default or on first use, go to Caja (/admin/cash)
@@ -219,6 +224,11 @@ export default function POS() {
         navigate('/admin');
       }
     } else {
+      try {
+        sessionStorage.setItem('loggedInWaiter', JSON.stringify(user));
+      } catch (e) {
+        console.error(e);
+      }
       setLoggedInWaiter(user);
     }
   };
