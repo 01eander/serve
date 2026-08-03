@@ -63,7 +63,7 @@ export default function ReceiptModal({ receiptData, onClose }) {
             ) : (
               <img 
                 src={serveLogo} 
-                alt="SERVE POS" 
+                alt="Serve" 
                 className="h-16 w-auto object-contain mx-auto mb-2 drop-shadow-md" 
               />
             )}

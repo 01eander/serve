@@ -64,7 +64,7 @@ const translations = {
     hide_pin: 'Ocultar PIN',
     
     // Onboarding Virtual Tour
-    onboarding_title: '¡Bienvenido a Oleander Serve POS! 🚀',
+    onboarding_title: '¡Bienvenido a Oleander Serve! 🚀',
     onboarding_subtitle: 'Guía rápida de primer uso para tu restaurante',
     onboarding_step_1_title: '1. Módulo de Catálogos',
     onboarding_step_1_desc: 'Aquí puedes dar de alta tus catálogos, usuarios (meseros y administradores), platillos, categorías y mesas desde el menú Catálogos.',
@@ -74,7 +74,7 @@ const translations = {
     onboarding_step_3_desc: 'Aquí puedes dar de alta promociones y descuentos automáticos (esta función está disponible al actualizar a la versión PRO).',
     onboarding_step_4_title: '4. Configuración del Restaurante',
     onboarding_step_4_desc: 'Personaliza el nombre de tu establecimiento, el logotipo, la divisa de cobro y la tasa de impuesto (IVA).',
-    onboarding_step_5_title: '5. Punto de Venta (POS) & Cocina',
+    onboarding_step_5_title: '5. Punto de Venta & Cocina',
     onboarding_step_5_desc: 'Haz clic en "Regresar al login" para ingresar con cualquier usuario mesero o admin, tomar comandas en mesas y enviarlas al monitor KDS de cocina.',
     onboarding_next: 'Siguiente',
     onboarding_prev: 'Anterior',
@@ -193,7 +193,7 @@ const translations = {
     no_tables_registered: 'No hay mesas registradas.',
     edit_table: 'Editar Mesa',
     capacity_pax: 'Capacidad (Pax)',
-    status_auto_update: 'Normalmente el estado se actualiza automáticamente desde el POS, pero puedes ajustarlo si hubo un error.',
+    status_auto_update: 'Normalmente el estado se actualiza automáticamente desde el sistema, pero puedes ajustarlo si hubo un error.',
     confirm_delete_table: '¿Estás seguro de ELIMINAR la Mesa',
     confirm_delete_table_warning: '(Esta acción no se puede deshacer y fallará si tiene órdenes asociadas)',
     
@@ -248,7 +248,7 @@ const translations = {
     last_7_days: 'Últimos 7 días',
     top_selling_dishes: 'Platillos Más Vendidos',
     no_dishes_sold: 'Sin platillos vendidos aún',
-    no_dishes_desc: 'Realiza pedidos en el POS para ver tus platillos estrella aquí.',
+    no_dishes_desc: 'Realiza pedidos en el sistema para ver tus platillos estrella aquí.',
     staff_performance: 'Rendimiento del Personal',
     no_users_registered: 'Sin usuarios registrados',
     user_staff: 'Usuario / Personal',
@@ -314,7 +314,7 @@ const translations = {
 
     // Invoice Portal (public)
     invoice_portal_title: 'Facturación Electrónica',
-    powered_by: 'Impulsado por Serve POS',
+    powered_by: 'Impulsado por Oleander Serve',
     consumption_summary: 'Resumen de Consumo',
     fiscal_details: 'Tus Datos Fiscales',
     rfc: 'RFC',
@@ -450,7 +450,7 @@ const translations = {
     hide_pin: 'Hide PIN',
     
     // Onboarding Virtual Tour
-    onboarding_title: 'Welcome to Oleander Serve POS! 🚀',
+    onboarding_title: 'Welcome to Oleander Serve! 🚀',
     onboarding_subtitle: 'Quick start guide for your restaurant',
     onboarding_step_1_title: '1. Catalogs Module',
     onboarding_step_1_desc: 'Here you can register your catalogs, users (waiters and admins), dishes, categories and tables from the Catalogs menu.',
@@ -460,7 +460,7 @@ const translations = {
     onboarding_step_3_desc: 'Here you can set up special promotions and automatic discounts (this feature is available when upgrading to the PRO version).',
     onboarding_step_4_title: '4. Restaurant Settings',
     onboarding_step_4_desc: 'Customize your restaurant name, logo, currency symbol, tax rate (VAT), and default language.',
-    onboarding_step_5_title: '5. Point of Sale (POS) & Kitchen',
+    onboarding_step_5_title: '5. Point of Sale & Kitchen',
     onboarding_step_5_desc: 'Click "Back to login" to log in as any waiter or admin to take table orders and send them to the kitchen KDS display.',
     onboarding_next: 'Next',
     onboarding_prev: 'Previous',
@@ -579,7 +579,7 @@ const translations = {
     no_tables_registered: 'No tables registered.',
     edit_table: 'Edit Table',
     capacity_pax: 'Capacity (Pax)',
-    status_auto_update: 'Status is usually updated automatically from the POS, but you can adjust it if there was an error.',
+    status_auto_update: 'Status is usually updated automatically from the system, but you can adjust it if there was an error.',
     confirm_delete_table: 'Are you sure to DELETE Table',
     confirm_delete_table_warning: '(This action cannot be undone and will fail if it has associated orders)',
     
@@ -639,7 +639,7 @@ const translations = {
     last_7_days: 'Last 7 days',
     top_selling_dishes: 'Top Selling Dishes',
     no_dishes_sold: 'No dishes sold yet',
-    no_dishes_desc: 'Make orders in the POS to see your top dishes here.',
+    no_dishes_desc: 'Make orders in the system to see your top dishes here.',
     staff_performance: 'Staff Performance',
     no_users_registered: 'No registered users',
     user_staff: 'User / Staff',
@@ -705,7 +705,7 @@ const translations = {
 
     // Invoice Portal (public)
     invoice_portal_title: 'Electronic Invoicing',
-    powered_by: 'Powered by Serve POS',
+    powered_by: 'Powered by Oleander Serve',
     consumption_summary: 'Consumption Summary',
     fiscal_details: 'Your Tax Details',
     rfc: 'Tax ID (RFC)',
@@ -841,7 +841,7 @@ const translations = {
     hide_pin: 'Ocultar PIN',
     
     // Onboarding Virtual Tour
-    onboarding_title: 'Bem-vindo ao Oleander Serve POS! 🚀',
+    onboarding_title: 'Bem-vindo ao Oleander Serve! 🚀',
     onboarding_subtitle: 'Guia rápido de primeiro uso para o seu restaurante',
     onboarding_step_1_title: '1. Módulo de Catálogos',
     onboarding_step_1_desc: 'Aqui você pode cadastrar seus catálogos, usuários (garçons e admins), pratos, categorias e mesas no menu Catálogos.',
@@ -851,7 +851,7 @@ const translations = {
     onboarding_step_3_desc: 'Aqui você pode cadastrar promoções e descontos automáticos (este recurso está disponível ao atualizar para a versão PRO).',
     onboarding_step_4_title: '4. Configurações do Restaurante',
     onboarding_step_4_desc: 'Personalize o nome do seu restaurante, logotipo, moeda de cobrança e taxa de imposto (IVA).',
-    onboarding_step_5_title: '5. Ponto de Venda (POS) & Cozinha',
+    onboarding_step_5_title: '5. Ponto de Venda & Cozinha',
     onboarding_step_5_desc: 'Clique em "Voltar ao login" para entrar com qualquer usuário garçom ou admin, fazer pedidos nas mesas e enviá-los ao monitor KDS de cozinha.',
     onboarding_next: 'Próximo',
     onboarding_prev: 'Anterior',
@@ -1096,7 +1096,7 @@ const translations = {
 
     // Invoice Portal (public)
     invoice_portal_title: 'Faturação Eletrônica',
-    powered_by: 'Desenvolvido por Serve POS',
+    powered_by: 'Desenvolvido por Oleander Serve',
     consumption_summary: 'Resumo do Consumo',
     fiscal_details: 'Seus Dados Fiscais',
     rfc: 'CNPJ',

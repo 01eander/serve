@@ -144,7 +144,7 @@ export default function KitchenView() {
             <span>{t('back_to_tables')}</span>
           </button>
           <div className="flex items-center space-x-3">
-            <img src={smallLogo} alt="SERVE POS" className="h-10 w-auto object-contain drop-shadow-md" />
+            <img src={smallLogo} alt="Serve" className="h-10 w-auto object-contain drop-shadow-md" />
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-2xl font-black tracking-tight">{t('kds_title')}</h1>

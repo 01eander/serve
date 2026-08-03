@@ -54,7 +54,7 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-8 py-4 sm:py-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800 z-10 gap-3">
         <div className="flex items-center space-x-4">
-          <img src={smallLogo} alt="SERVE POS" className="h-10 sm:h-12 w-auto object-contain drop-shadow-md" />
+          <img src={smallLogo} alt="Serve" className="h-10 sm:h-12 w-auto object-contain drop-shadow-md" />
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">{t('table_map')}</h1>

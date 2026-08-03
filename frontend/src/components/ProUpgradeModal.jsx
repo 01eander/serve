@@ -12,7 +12,7 @@ export default function ProUpgradeModal({ isOpen, onClose, triggerReason }) {
 
   const companyName = company?.name || 'Mi Empresa';
   const whatsappMsg = encodeURIComponent(
-    `¡Hola Oleander Software! 👋 Deseo actualizar mi empresa "${companyName}" (ID #${company?.id || ''}) a la versión 👑 PRO de Oleander Serve POS.`
+    `¡Hola Oleander Software! 👋 Deseo actualizar mi empresa "${companyName}" (ID #${company?.id || ''}) a la versión 👑 PRO de Oleander Serve.`
   );
   const whatsappUrl = `https://wa.me/524427821011?text=${whatsappMsg}`;
 
@@ -45,7 +45,7 @@ export default function ProUpgradeModal({ isOpen, onClose, triggerReason }) {
           {/* Header Banner */}
           <div className="p-8 pb-6 bg-gradient-to-r from-amber-500/20 via-indigo-600/20 to-purple-600/20 border-b border-slate-800 relative">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
-              <img src={serveLogo} alt="SERVE POS" className="h-12 w-auto object-contain drop-shadow-lg" />
+              <img src={serveLogo} alt="Serve" className="h-12 w-auto object-contain drop-shadow-lg" />
               <div className="flex items-center space-x-2">
                 <span className="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-xs rounded-full shadow-md flex items-center space-x-1">
                   <Sparkles className="w-3.5 h-3.5" />

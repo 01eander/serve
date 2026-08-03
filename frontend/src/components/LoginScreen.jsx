@@ -176,7 +176,7 @@ export default function LoginScreen({ users, onLogin }) {
             <div className="mb-6 sm:mb-8 flex items-center space-x-4">
               <img 
                 src={serveLogo} 
-                alt="SERVE POS" 
+                alt="Serve" 
                 className="h-10 sm:h-12 w-auto object-contain drop-shadow-[0_4px_10px_rgba(99,102,241,0.3)] hover:scale-105 transition-transform duration-300 flex-shrink-0" 
               />
               <div className="h-8 w-[2px] bg-gradient-to-b from-transparent via-slate-300 dark:via-slate-600 to-transparent flex-shrink-0 rounded-full" />

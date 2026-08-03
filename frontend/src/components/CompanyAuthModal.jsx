@@ -130,7 +130,7 @@ export default function CompanyAuthModal({ onAuthenticated }) {
         <div className="p-8 pb-6 text-center bg-gradient-to-b from-slate-800/80 to-transparent relative border-b border-slate-800/60">
           <img 
             src={serveLogo} 
-            alt="SERVE POS" 
+            alt="Serve" 
             className="h-20 w-auto object-contain mx-auto mb-3 drop-shadow-xl" 
           />
           <h2 className="text-2xl font-black tracking-tight text-white">{t('saas_auth_title')}</h2>
