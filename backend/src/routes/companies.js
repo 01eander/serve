@@ -37,6 +37,7 @@ async function initMultiTenancy() {
     await pool.query(`ALTER TABLE companies ADD COLUMN IF NOT EXISTS parent_company_id INT REFERENCES companies(id)`);
     await pool.query(`ALTER TABLE companies ADD COLUMN IF NOT EXISTS is_franchise_parent BOOLEAN DEFAULT false`);
     await pool.query(`ALTER TABLE companies ADD COLUMN IF NOT EXISTS allow_child_menu_edit BOOLEAN DEFAULT true`);
+    await pool.query(`ALTER TABLE companies ADD COLUMN IF NOT EXISTS allow_child_promotions_edit BOOLEAN DEFAULT true`);
 
     // Drop legacy single-column UNIQUE constraint on table_number so each company can have Mesa 1, 2, etc.
     await pool.query(`ALTER TABLE tables DROP CONSTRAINT IF EXISTS tables_table_number_key`);
@@ -281,11 +282,72 @@ router.patch('/:id/franchise/enable', async (req, res) => {
   }
 });
 
-// 2. Toggle Menu Permissions for Children
+// 2. Toggle Menu & Promotions Permissions for Children
+router.patch('/:id/franchise/permissions', async (req, res) => {
+  const { id } = req.params;
+  const { allow_child_menu_edit, allow_child_promotions_edit } = req.body;
+  try {
+    const parentCheck = await pool.query('SELECT plan FROM companies WHERE id = $1', [id]);
+    if (parentCheck.rows[0]?.plan !== 'pro') {
+      return res.status(403).json({ error: 'Las configuraciones de franquicia requieren una cuenta PRO.' });
+    }
+
+    // Check if trying to restrict edit (set to false)
+    if (allow_child_menu_edit === false || allow_child_promotions_edit === false) {
+      const nonProBranches = await pool.query(
+        "SELECT COUNT(*) FROM companies WHERE parent_company_id = $1 AND (plan IS NULL OR plan != 'pro')",
+        [id]
+      );
+      const nonProCount = parseInt(nonProBranches.rows[0].count, 10);
+      if (nonProCount > 0) {
+        return res.status(403).json({ 
+          error: 'Para habilitar el control centralizado o herencia (menú o promociones), todas las sucursales deben contar con una licencia PRO activa.' 
+        });
+      }
+    }
+
+    const updates = [];
+    const values = [];
+    let paramIdx = 1;
+
+    if (allow_child_menu_edit !== undefined) {
+      updates.push(`allow_child_menu_edit = $${paramIdx++}`);
+      values.push(allow_child_menu_edit);
+    }
+    if (allow_child_promotions_edit !== undefined) {
+      updates.push(`allow_child_promotions_edit = $${paramIdx++}`);
+      values.push(allow_child_promotions_edit);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ error: 'No updates specified' });
+    }
+
+    values.push(id);
+    const query = `UPDATE companies SET ${updates.join(', ')} WHERE id = $${paramIdx} AND is_franchise_parent = true RETURNING *`;
+    const result = await pool.query(query, values);
+    res.json({ company: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Legacy route compatibility
 router.patch('/:id/franchise/menu-permissions', async (req, res) => {
   const { id } = req.params;
   const { allow_child_menu_edit } = req.body;
   try {
+    if (allow_child_menu_edit === false) {
+      const nonProBranches = await pool.query(
+        "SELECT COUNT(*) FROM companies WHERE parent_company_id = $1 AND (plan IS NULL OR plan != 'pro')",
+        [id]
+      );
+      if (parseInt(nonProBranches.rows[0].count, 10) > 0) {
+        return res.status(403).json({ 
+          error: 'Para habilitar el control centralizado de menú, todas las sucursales deben contar con una licencia PRO activa.' 
+        });
+      }
+    }
     const result = await pool.query(
       'UPDATE companies SET allow_child_menu_edit = $1 WHERE id = $2 AND is_franchise_parent = true RETURNING *',
       [allow_child_menu_edit, id]

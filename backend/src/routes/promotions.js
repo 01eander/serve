@@ -45,10 +45,36 @@ const getCompanyId = (req) => {
   return parseInt(req.headers['x-company-id'] || req.query.company_id || req.body?.company_id || '1', 10);
 };
 
+// Helper to check franchise promotions edit permissions
+const checkPromotionsEditPermission = async (companyId, res) => {
+  const companyRes = await pool.query('SELECT parent_company_id FROM companies WHERE id = $1', [companyId]);
+  const parentId = companyRes.rows[0]?.parent_company_id;
+  if (parentId) {
+    const parentRes = await pool.query('SELECT allow_child_promotions_edit FROM companies WHERE id = $1', [parentId]);
+    if (parentRes.rows.length > 0 && parentRes.rows[0].allow_child_promotions_edit === false) {
+      res.status(403).json({ error: '🔒 Tu Franquicia corporativa ha bloqueado la edición de promociones locales.' });
+      return false;
+    }
+  }
+  return true;
+};
+
 // Get all promotions
 router.get('/', async (req, res) => {
   const companyId = getCompanyId(req);
   try {
+    const companyRes = await pool.query('SELECT parent_company_id FROM companies WHERE id = $1', [companyId]);
+    const parentId = companyRes.rows[0]?.parent_company_id;
+    const parentIdParam = parentId || companyId;
+
+    let canEdit = true;
+    if (parentId) {
+      const parentRes = await pool.query('SELECT allow_child_promotions_edit FROM companies WHERE id = $1', [parentId]);
+      if (parentRes.rows.length > 0 && parentRes.rows[0].allow_child_promotions_edit === false) {
+        canEdit = false;
+      }
+    }
+
     const result = await pool.query(`
       SELECT p.*,
         CASE 
@@ -58,10 +84,11 @@ router.get('/', async (req, res) => {
       FROM promotions p
       LEFT JOIN categories c ON p.target_type = 'category' AND p.target_id = c.id
       LEFT JOIN menu_items m ON p.target_type = 'item' AND p.target_id = m.id
-      WHERE p.company_id = $1 OR p.company_id IS NULL
+      WHERE p.company_id = $1 OR p.company_id = $2 OR p.company_id IS NULL
       ORDER BY p.id DESC
-    `, [companyId]);
-    res.json(result.rows);
+    `, [companyId, parentIdParam]);
+
+    res.json({ promotions: result.rows, canEdit });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -70,6 +97,9 @@ router.get('/', async (req, res) => {
 // Create promotion
 router.post('/', async (req, res) => {
   const companyId = getCompanyId(req);
+  const canProceed = await checkPromotionsEditPermission(companyId, res);
+  if (!canProceed) return;
+
   const { 
     name, target_type, target_id, discount_type, discount_value, 
     start_date, end_date, happy_hour_start, happy_hour_end, active 
@@ -97,6 +127,10 @@ router.post('/', async (req, res) => {
 
 // Update promotion
 router.put('/:id', async (req, res) => {
+  const companyId = getCompanyId(req);
+  const canProceed = await checkPromotionsEditPermission(companyId, res);
+  if (!canProceed) return;
+
   const { id } = req.params;
   const { 
     name, target_type, target_id, discount_type, discount_value, 
@@ -125,6 +159,10 @@ router.put('/:id', async (req, res) => {
 
 // Delete promotion
 router.delete('/:id', async (req, res) => {
+  const companyId = getCompanyId(req);
+  const canProceed = await checkPromotionsEditPermission(companyId, res);
+  if (!canProceed) return;
+
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM promotions WHERE id = $1', [id]);

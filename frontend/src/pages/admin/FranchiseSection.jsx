@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Building2, Plus, Save, Shield, Lock, Loader2, Sparkles, Building } from 'lucide-react';
+import { Building2, Plus, Save, Shield, Lock, Loader2, Sparkles, Building, Tag, AlertCircle } from 'lucide-react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
@@ -12,6 +12,7 @@ export default function FranchiseSection() {
 
   const [isFranchiseParent, setIsFranchiseParent] = useState(company?.is_franchise_parent || false);
   const [allowChildMenuEdit, setAllowChildMenuEdit] = useState(company?.allow_child_menu_edit !== false);
+  const [allowChildPromotionsEdit, setAllowChildPromotionsEdit] = useState(company?.allow_child_promotions_edit !== false);
   const [branches, setBranches] = useState([]);
   
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,14 @@ export default function FranchiseSection() {
   const [newBranchEmail, setNewBranchEmail] = useState('');
   const [newBranchPassword, setNewBranchPassword] = useState('');
   const [creatingBranch, setCreatingBranch] = useState(false);
+
+  useEffect(() => {
+    if (company) {
+      setIsFranchiseParent(company.is_franchise_parent || false);
+      setAllowChildMenuEdit(company.allow_child_menu_edit !== false);
+      setAllowChildPromotionsEdit(company.allow_child_promotions_edit !== false);
+    }
+  }, [company]);
 
   useEffect(() => {
     if (isFranchiseParent) {
@@ -41,6 +50,9 @@ export default function FranchiseSection() {
       console.error('Error fetching branches:', err);
     }
   };
+
+  const nonProBranches = branches.filter(b => b.plan !== 'pro');
+  const hasNonProBranches = nonProBranches.length > 0;
 
   const handleEnableFranchise = async () => {
     if (isFreemium) {
@@ -70,19 +82,61 @@ export default function FranchiseSection() {
 
   const handleToggleMenuPermission = async () => {
     const newValue = !allowChildMenuEdit;
+    if (newValue === false && hasNonProBranches) {
+      alert(`Para habilitar el Control de Menú Global Estricto, todas las sucursales deben contar con una licencia PRO activa. Tienes ${nonProBranches.length} sucursal(es) en plan Freemium.`);
+      return;
+    }
     setAllowChildMenuEdit(newValue);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/menu-permissions`, {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/permissions`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ allow_child_menu_edit: newValue })
+        body: JSON.stringify({ 
+          allow_child_menu_edit: newValue,
+          allow_child_promotions_edit: allowChildPromotionsEdit
+        })
       });
       if (res.ok) {
         const data = await res.json();
         loginCompany(data.company);
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Error al actualizar permisos de menú');
+        setAllowChildMenuEdit(!newValue);
       }
     } catch (err) {
       console.error(err);
+      setAllowChildMenuEdit(!newValue);
+    }
+  };
+
+  const handleTogglePromotionsPermission = async () => {
+    const newValue = !allowChildPromotionsEdit;
+    if (newValue === false && hasNonProBranches) {
+      alert(`Para habilitar las Promociones Globales Heredadas, todas las sucursales deben contar con una licencia PRO activa. Tienes ${nonProBranches.length} sucursal(es) en plan Freemium.`);
+      return;
+    }
+    setAllowChildPromotionsEdit(newValue);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/companies/${company.id}/franchise/permissions`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          allow_child_menu_edit: allowChildMenuEdit,
+          allow_child_promotions_edit: newValue
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        loginCompany(data.company);
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Error al actualizar permisos de promociones');
+        setAllowChildPromotionsEdit(!newValue);
+      }
+    } catch (err) {
+      console.error(err);
+      setAllowChildPromotionsEdit(!newValue);
     }
   };
 
@@ -150,7 +204,7 @@ export default function FranchiseSection() {
           <Building2 className="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4" />
           <h4 className="text-lg font-black text-slate-700 dark:text-slate-200 mb-2">¿Tienes múltiples sucursales?</h4>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
-            Convierte esta cuenta en el "Corporativo (HQ)". Podrás agregar sucursales, ver gráficas globales en tiempo real y decidir si las sucursales pueden editar su propio menú o si quieres forzar un menú global.
+            Convierte esta cuenta en el "Corporativo (HQ)". Podrás agregar sucursales, ver gráficas globales en tiempo real y decidir si las sucursales heredan tu menú y promociones corporativas.
           </p>
           <button
             onClick={handleEnableFranchise}
@@ -178,30 +232,72 @@ export default function FranchiseSection() {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Permissions Toggle */}
-          <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h4 className="font-bold text-slate-800 dark:text-slate-100 flex items-center">
-                <Shield className="w-4 h-4 mr-2 text-primary-500" />
-                Control de Menú
-              </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Si está apagado, las sucursales solo podrán ver y vender el menú que tú configures aquí en el corporativo.
-              </p>
+          {/* Branch PRO Requirements Warning Banner */}
+          {hasNonProBranches && (
+            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start space-x-3 text-amber-800 dark:text-amber-300">
+              <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-1">
+                <p className="font-bold">Licencias PRO Requeridas en Sucursales</p>
+                <p className="opacity-90">
+                  Tienes {nonProBranches.length} sucursal(es) en versión <strong>Freemium</strong>. Para activar el <strong>Menú Global Estricto</strong> o las <strong>Promociones Globales Heredadas</strong>, todas las sucursales deben contar con una licencia <strong>PRO</strong> activa.
+                </p>
+              </div>
             </div>
-            
-            <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
-              <input 
-                type="checkbox" 
-                className="sr-only peer"
-                checked={allowChildMenuEdit}
-                onChange={handleToggleMenuPermission}
-              />
-              <div className="w-11 h-6 bg-slate-300 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
-              <span className="ml-3 text-sm font-bold text-slate-700 dark:text-slate-300">
-                {allowChildMenuEdit ? 'Sucursales pueden editar menú' : 'Menú Global Estricto'}
-              </span>
-            </label>
+          )}
+
+          {/* Permissions Toggles Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* 1. Menu Control */}
+            <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
+              <div>
+                <h4 className="font-bold text-slate-800 dark:text-slate-100 flex items-center">
+                  <Shield className="w-4 h-4 mr-2 text-primary-500" />
+                  Control de Menú
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  Si está en modo estricto, las sucursales no pueden modificar el catálogo y venden únicamente el menú corporativo.
+                </p>
+              </div>
+              
+              <label className="relative inline-flex items-center cursor-pointer pt-2">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer"
+                  checked={!allowChildMenuEdit}
+                  onChange={handleToggleMenuPermission}
+                />
+                <div className="w-11 h-6 bg-slate-300 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                <span className="ml-3 text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {!allowChildMenuEdit ? 'Menú Global Estricto (HQ)' : 'Sucursales editan menú local'}
+                </span>
+              </label>
+            </div>
+
+            {/* 2. Promotions Control */}
+            <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-4">
+              <div>
+                <h4 className="font-bold text-slate-800 dark:text-slate-100 flex items-center">
+                  <Tag className="w-4 h-4 mr-2 text-amber-500" />
+                  Heredar Promociones
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  Si está en modo heredado, las sucursales aplicarán automáticamente todas las promociones configuradas por el HQ.
+                </p>
+              </div>
+              
+              <label className="relative inline-flex items-center cursor-pointer pt-2">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer"
+                  checked={!allowChildPromotionsEdit}
+                  onChange={handleTogglePromotionsPermission}
+                />
+                <div className="w-11 h-6 bg-slate-300 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                <span className="ml-3 text-xs font-bold text-slate-700 dark:text-slate-300">
+                  {!allowChildPromotionsEdit ? 'Promociones Heredadas (HQ)' : 'Sucursales crean promociones locales'}
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Branches List */}
@@ -278,8 +374,17 @@ export default function FranchiseSection() {
                 branches.map(branch => (
                   <div key={branch.id} className="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
                     <div>
-                      <h5 className="font-black text-slate-900 dark:text-white text-lg">{branch.name}</h5>
-                      <p className="text-xs text-slate-500">{branch.email}</p>
+                      <div className="flex items-center space-x-2">
+                        <h5 className="font-black text-slate-900 dark:text-white text-base">{branch.name}</h5>
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                          branch.plan === 'pro'
+                            ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                        }`}>
+                          {branch.plan === 'pro' ? '👑 PRO' : '⚡ Freemium'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">{branch.email}</p>
                     </div>
                     <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded-full uppercase">
                       Activa

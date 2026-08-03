@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS companies (
     parent_company_id INT REFERENCES companies(id),
     is_franchise_parent BOOLEAN DEFAULT false,
     allow_child_menu_edit BOOLEAN DEFAULT true,
+    allow_child_promotions_edit BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 

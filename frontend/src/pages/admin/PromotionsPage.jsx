@@ -9,7 +9,7 @@ import ProUpgradeModal from '../../components/ProUpgradeModal';
 
 export default function PromotionsPage() {
   const { formatCurrency } = useCurrency();
-  const { company } = useCompany();
+  const { company, companyFetch } = useCompany();
   const isFreemium = company?.plan !== 'pro';
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -17,6 +17,7 @@ export default function PromotionsPage() {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [canEdit, setCanEdit] = useState(true);
 
   // Modal State
   const [showModal, setShowModal] = useState(false);
@@ -41,11 +42,21 @@ export default function PromotionsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      const fetchFn = companyFetch || fetch;
       const [promoRes, menuRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/promotions`),
-        fetch(`${API_BASE_URL}/api/menu`)
+        fetchFn(`${API_BASE_URL}/api/promotions`),
+        fetchFn(`${API_BASE_URL}/api/menu`)
       ]);
-      if (promoRes.ok) setPromotions(await promoRes.json());
+      if (promoRes.ok) {
+        const promoData = await promoRes.json();
+        if (Array.isArray(promoData)) {
+          setPromotions(promoData);
+          setCanEdit(true);
+        } else {
+          setPromotions(promoData.promotions || []);
+          setCanEdit(promoData.canEdit !== false);
+        }
+      }
       if (menuRes.ok) {
         const menuData = await menuRes.json();
         setCategories(menuData.categories || []);
@@ -197,14 +208,28 @@ export default function PromotionsPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => handleOpenModal()}
-          className="px-6 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-extrabold rounded-2xl shadow-lg hover:shadow-primary-500/25 transition-all flex items-center justify-center space-x-2 text-sm"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Nueva Campaña Promocional</span>
-        </button>
+        {canEdit ? (
+          <button
+            onClick={() => handleOpenModal()}
+            className="px-6 py-3.5 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-extrabold rounded-2xl shadow-lg hover:shadow-primary-500/25 transition-all flex items-center justify-center space-x-2 text-sm"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Nueva Campaña Promocional</span>
+          </button>
+        ) : (
+          <span className="px-4 py-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-extrabold text-xs rounded-xl border border-amber-500/30 flex items-center space-x-1.5">
+            <Lock className="w-4 h-4" />
+            <span>Promociones Centralizadas por HQ</span>
+          </span>
+        )}
       </div>
+
+      {!canEdit && (
+        <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center space-x-3 text-amber-800 dark:text-amber-300 font-bold text-xs">
+          <Lock className="w-5 h-5 text-amber-500 shrink-0" />
+          <span>🔒 Tu Franquicia corporativa ha congelado la edición de promociones locales. Tu sucursal hereda automáticamente las promociones activas del corporativo (HQ).</span>
+        </div>
+      )}
 
       {/* Grid of Promotions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
