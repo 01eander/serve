@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShieldCheck, Building2, Utensils, Users, LayoutGrid, FileText, Search, Filter, AlertTriangle, CheckCircle, Ban, Sparkles, RefreshCw, LogOut, DollarSign, Calendar, Edit3, Key } from 'lucide-react';
+import { ShieldCheck, Building2, Utensils, Users, LayoutGrid, FileText, Search, Filter, AlertTriangle, CheckCircle, Ban, Sparkles, RefreshCw, LogOut, DollarSign, Calendar, Edit3, Key, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCompany } from '../../contexts/CompanyContext';
@@ -25,6 +25,11 @@ export default function MasterAdminPortal() {
   const [selectedCompanyForPassword, setSelectedCompanyForPassword] = useState(null);
   const [newPassword, setNewPassword] = useState('');
   const [savingPassword, setSavingPassword] = useState(false);
+
+  // Company delete state
+  const [selectedCompanyForDelete, setSelectedCompanyForDelete] = useState(null);
+  const [deletingCompany, setDeletingCompany] = useState(false);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState('');
 
   const fetchMasterStats = async () => {
     try {
@@ -136,6 +141,32 @@ export default function MasterAdminPortal() {
       alert('Error de red al resetear la contraseña');
     } finally {
       setSavingPassword(false);
+    }
+  };
+
+  const handleDeleteCompany = async (e) => {
+    e.preventDefault();
+    if (!selectedCompanyForDelete) return;
+
+    setDeletingCompany(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/master/companies/${selectedCompanyForDelete.id}`, {
+        method: 'DELETE'
+      });
+      const resData = await res.json();
+      if (res.ok) {
+        alert(resData.message || 'Empresa eliminada con éxito');
+        setSelectedCompanyForDelete(null);
+        setDeleteConfirmInput('');
+        fetchMasterStats();
+      } else {
+        alert(resData.error || 'Error al eliminar empresa');
+      }
+    } catch (err) {
+      console.error('Error deleting company:', err);
+      alert('Error al conectar con el servidor para eliminar la empresa');
+    } finally {
+      setDeletingCompany(false);
     }
   };
 
@@ -472,6 +503,17 @@ export default function MasterAdminPortal() {
                             <Edit3 className="w-3.5 h-3.5 text-slate-400" />
                             <span>{c.billing_notes ? 'Editar Notas' : '+ Facturación'}</span>
                           </button>
+                          <button
+                            onClick={() => {
+                              setSelectedCompanyForDelete(c);
+                              setDeleteConfirmInput('');
+                            }}
+                            className="px-3.5 py-1.5 bg-rose-950/40 hover:bg-rose-900/80 text-rose-400 hover:text-rose-200 text-xs font-extrabold rounded-xl border border-rose-800/60 inline-flex items-center space-x-1.5 transition-all w-fit active:scale-95"
+                            title="Eliminar empresa permanentemente"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                            <span>Eliminar Empresa</span>
+                          </button>
                         </div>
                         {c.billing_notes && (
                           <p className="text-[10px] text-amber-300/80 italic mt-1 line-clamp-1 max-w-[160px] ml-auto">
@@ -603,6 +645,74 @@ export default function MasterAdminPortal() {
                     className="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl text-xs transition-all shadow-md"
                   >
                     {savingPassword ? 'Guardando...' : 'Resetear'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Company Confirmation Modal */}
+      <AnimatePresence>
+        {selectedCompanyForDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-lg bg-slate-900 border border-rose-900/60 rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-white"
+            >
+              <div className="flex items-center space-x-3 border-b border-rose-900/40 pb-4">
+                <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl border border-rose-500/30">
+                  <Trash2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-white">¿Eliminar Empresa Permanentemente?</h3>
+                  <p className="text-xs text-rose-300 font-bold">{selectedCompanyForDelete.name} (ID #{selectedCompanyForDelete.id})</p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-rose-950/60 border border-rose-800/80 rounded-2xl space-y-2 text-xs text-rose-200">
+                <div className="flex items-center space-x-2 font-black text-rose-300">
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <span>¡ACCION DEPURADORA IRREVERSIBLE!</span>
+                </div>
+                <p className="leading-relaxed">
+                  Se eliminarán permanentemente <strong>todos los platillos ({selectedCompanyForDelete.dishes_count})</strong>, <strong>mesas ({selectedCompanyForDelete.tables_count})</strong>, <strong>usuarios ({selectedCompanyForDelete.users_count})</strong>, <strong>órdenes ({selectedCompanyForDelete.orders_count})</strong>, promociones, caja chica y datos fiscales de esta empresa.
+                </p>
+              </div>
+
+              <form onSubmit={handleDeleteCompany} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-extrabold text-slate-300 uppercase tracking-wider mb-2">
+                    Para confirmar la eliminación escribe <strong>"{selectedCompanyForDelete.name}"</strong>:
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={deleteConfirmInput}
+                    onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                    placeholder={selectedCompanyForDelete.name}
+                    className="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-2xl outline-none focus:border-rose-500 text-white text-sm font-bold transition-all"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end space-x-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCompanyForDelete(null)}
+                    className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={deletingCompany || deleteConfirmInput.trim().toLowerCase() !== selectedCompanyForDelete.name.trim().toLowerCase()}
+                    className="px-6 py-3 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black rounded-xl text-xs transition-all shadow-md flex items-center space-x-2 active:scale-95"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>{deletingCompany ? 'Eliminando...' : 'Eliminar Empresa Definitivamente'}</span>
                   </button>
                 </div>
               </form>

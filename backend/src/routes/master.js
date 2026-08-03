@@ -203,4 +203,64 @@ router.patch('/companies/:id/password', async (req, res) => {
   }
 });
 
+// Delete company and all associated data permanently
+router.delete('/companies/:id', async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Check company existence
+    const compRes = await client.query('SELECT * FROM companies WHERE id = $1', [id]);
+    if (compRes.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Empresa no encontrada' });
+    }
+    const companyName = compRes.rows[0].name;
+
+    // Purge invoices
+    await client.query('DELETE FROM invoices WHERE company_id = $1', [id]);
+
+    // Purge cash transactions & sessions
+    await client.query(`
+      DELETE FROM cash_transactions 
+      WHERE session_id IN (SELECT id FROM cash_drawer_sessions WHERE company_id = $1)
+    `, [id]);
+    await client.query('DELETE FROM cash_drawer_sessions WHERE company_id = $1', [id]);
+
+    // Purge promotions
+    await client.query('DELETE FROM promotions WHERE company_id = $1', [id]);
+
+    // Purge order items & orders
+    await client.query(`
+      DELETE FROM order_items 
+      WHERE order_id IN (SELECT id FROM orders WHERE company_id = $1)
+    `, [id]);
+    await client.query('DELETE FROM orders WHERE company_id = $1', [id]);
+
+    // Purge menu items & categories
+    await client.query('DELETE FROM menu_items WHERE company_id = $1', [id]);
+    await client.query('DELETE FROM categories WHERE company_id = $1', [id]);
+
+    // Purge tables & users
+    await client.query('DELETE FROM tables WHERE company_id = $1', [id]);
+    await client.query('DELETE FROM users WHERE company_id = $1', [id]);
+
+    // Unlink child companies if this was a parent franchise
+    await client.query('UPDATE companies SET parent_company_id = NULL WHERE parent_company_id = $1', [id]);
+
+    // Delete the company record
+    await client.query('DELETE FROM companies WHERE id = $1', [id]);
+
+    await client.query('COMMIT');
+    res.json({ message: `Empresa "${companyName}" (ID #${id}) eliminada permanentemente con todos sus datos.` });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error deleting company:', err);
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 export default router;
