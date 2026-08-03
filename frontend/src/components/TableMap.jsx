@@ -50,18 +50,18 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex flex-col h-screen bg-slate-100 dark:bg-slate-950 transition-colors duration-300 overflow-x-hidden">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-8 py-4 sm:py-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800 z-10 gap-3">
-        <div className="flex items-center space-x-4">
-          <img src={smallLogo} alt="Serve" className="h-10 sm:h-12 w-auto object-contain drop-shadow-md" />
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">{t('table_map')}</h1>
-              <span className="px-3 py-1 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-extrabold text-xs rounded-full border border-slate-300 dark:border-slate-700 flex items-center space-x-1.5 shadow-sm">
-                <img src={smallLogo} alt="Logo" className="w-4 h-4 object-contain" />
-                <span>{company?.name || 'Mi Empresa'}</span>
-                <span className={`inline-flex items-center space-x-1 px-2 py-0.2 rounded-full text-[9px] font-black ${
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between px-3 sm:px-8 py-3 sm:py-5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800 z-10 gap-3">
+        <div className="flex items-center space-x-3 sm:space-x-4 max-w-full">
+          <img src={smallLogo} alt="Serve" className="h-9 sm:h-12 w-auto object-contain drop-shadow-md shrink-0" />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight leading-tight shrink-0">{t('table_map')}</h1>
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-extrabold text-[11px] sm:text-xs rounded-full border border-slate-300 dark:border-slate-700 flex items-center space-x-1.5 shadow-sm max-w-full truncate">
+                <img src={smallLogo} alt="Logo" className="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain shrink-0" />
+                <span className="truncate">{company?.name || 'Mi Empresa'}</span>
+                <span className={`inline-flex items-center space-x-1 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-black shrink-0 ${
                   company?.plan === 'pro' 
                     ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white' 
                     : 'bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
@@ -71,38 +71,38 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
                 </span>
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{t('select_table_prompt')}</p>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 font-medium truncate">{t('select_table_prompt')}</p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end space-x-3 sm:space-x-4">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-4 max-w-full">
           <ThemeLangToggles />
           <Link
             to="/kitchen"
-            className="flex items-center space-x-1.5 sm:space-x-2 text-orange-700 dark:text-orange-300 transition-colors bg-orange-100 hover:bg-orange-200 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm border border-orange-300 dark:border-orange-700 shadow-sm"
+            className="flex items-center space-x-1 sm:space-x-2 text-orange-700 dark:text-orange-300 transition-colors bg-orange-100 hover:bg-orange-200 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm border border-orange-300 dark:border-orange-700 shadow-sm shrink-0"
           >
-            <ChefHat className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 dark:text-orange-400" />
+            <ChefHat className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-orange-600 dark:text-orange-400" />
             <span>{t('kitchen')}</span>
           </Link>
-          <div className="flex items-center space-x-2.5 sm:space-x-3 bg-slate-200/70 dark:bg-slate-800 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full border border-slate-300 dark:border-slate-700 shadow-inner">
-            <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">{waiterName}</span>
+          <div className="flex items-center space-x-1.5 sm:space-x-3 bg-slate-200/70 dark:bg-slate-800 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full border border-slate-300 dark:border-slate-700 shadow-inner max-w-[140px] sm:max-w-none truncate shrink-0">
+            <div className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{waiterName}</span>
           </div>
           <button 
             onClick={onLogout}
-            className="flex items-center space-x-1.5 sm:space-x-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors bg-red-100 hover:bg-red-200 dark:bg-red-500/10 dark:hover:bg-red-500/20 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm"
+            className="flex items-center space-x-1 sm:space-x-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors bg-red-100 hover:bg-red-200 dark:bg-red-500/10 dark:hover:bg-red-500/20 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm shrink-0 active:scale-95"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>{t('logout')}</span>
           </button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
+      <main className="flex-1 overflow-y-auto p-3 sm:p-8 custom-scrollbar">
         <div className="max-w-7xl mx-auto">
           {/* Legend */}
-          <div className="flex flex-wrap gap-3 sm:gap-6 mb-6 sm:mb-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 sm:p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 inline-flex">
+          <div className="flex flex-wrap gap-2.5 sm:gap-6 mb-4 sm:mb-8 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2.5 sm:p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 inline-flex max-w-full">
             <div className="flex items-center space-x-2">
               <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded bg-white dark:bg-emerald-950 border-2 border-emerald-400 dark:border-emerald-500"></div>
               <span className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-bold">{t('available')}</span>
@@ -132,7 +132,7 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
                 key={table.id}
                 onClick={() => onSelectTable(table.id)}
                 className={`
-                  relative flex flex-col items-center justify-center p-8 rounded-[2rem] border-2 shadow-sm backdrop-blur-md transition-colors duration-300 overflow-hidden
+                  relative flex flex-col items-center justify-center p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] border-2 shadow-sm backdrop-blur-md transition-colors duration-300 overflow-hidden
                   ${getStatusColor(table.status)}
                 `}
               >
@@ -144,8 +144,8 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
                   />
                 </div>
                 
-                <div className="absolute top-4 right-4 z-10">
-                  <span className={`text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-inner ${
+                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
+                  <span className={`text-[9px] sm:text-[10px] uppercase font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-inner ${
                     table.status === 'available' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300' :
                     table.status === 'occupied' ? 'bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-300' :
                     'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300'
@@ -154,18 +154,18 @@ export default function TableMap({ tables, onSelectTable, onLogout, waiterName }
                   </span>
                 </div>
                 
-                <Users className={`relative z-10 w-8 h-8 mb-2 opacity-50 ${
+                <Users className={`relative z-10 w-6 h-6 sm:w-8 sm:h-8 mb-1.5 sm:mb-2 opacity-50 ${
                   table.status === 'available' ? 'text-emerald-600 dark:text-emerald-400' :
                   table.status === 'occupied' ? 'text-orange-600 dark:text-orange-400' :
                   'text-blue-600 dark:text-blue-400'
                 }`} />
                 
-                <div className="relative z-10 flex flex-col items-center justify-center my-1 drop-shadow-sm">
-                  <span className="text-[11px] font-black tracking-widest text-slate-800/80 dark:text-slate-300 uppercase">{t('table_short')}</span>
-                  <h3 className="text-4xl font-black text-slate-800 dark:text-white leading-none mt-0.5">
+                <div className="relative z-10 flex flex-col items-center justify-center my-1 drop-shadow-sm w-full text-center px-1">
+                  <span className="text-[10px] sm:text-[11px] font-black tracking-widest text-slate-800/80 dark:text-slate-300 uppercase">{t('table_short')}</span>
+                  <h3 className="text-2xl sm:text-4xl font-black text-slate-800 dark:text-white leading-tight mt-0.5 break-words max-w-full">
                     {table.table_number || table.number || table.id}
                   </h3>
-                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-2">
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 mt-1 sm:mt-2">
                     {table.capacity} Pax
                   </span>
                 </div>
