@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, ArrowRight, Building2, LogOut, Sparkles, Info, X, KeyRound, Loader2, Check } from 'lucide-react';
+import { User, Lock, ArrowRight, Building2, LogOut, Sparkles, Info, X, KeyRound, Loader2, Check, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeLangToggles from './ThemeLangToggles';
 import CompanyAuthModal from './CompanyAuthModal';
@@ -357,18 +357,29 @@ export default function LoginScreen({ users, onLogin }) {
         </div>
       </motion.div>
 
-      {/* Oleander Software Brand Logo Centered Below Card */}
+      {/* Oleander Software Brand Logo Link Centered Below Card */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="relative z-10 flex justify-center items-center mt-6"
+        className="relative z-10 flex flex-col justify-center items-center mt-6"
       >
-        <img 
-          src={oleanderLogoWhite} 
-          alt="Oleander Software" 
-          className="h-20 sm:h-32 w-auto max-w-sm sm:max-w-md object-contain mix-blend-screen drop-shadow-2xl transition-all duration-300"
-        />
+        <a
+          href="https://oleander.mx"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col items-center justify-center transition-all hover:scale-105"
+        >
+          <img 
+            src={oleanderLogoWhite} 
+            alt="Oleander Software" 
+            className="h-20 sm:h-28 w-auto max-w-sm sm:max-w-md object-contain mix-blend-screen drop-shadow-2xl transition-all duration-300 group-hover:brightness-110"
+          />
+          <span className="text-xs sm:text-sm font-bold text-slate-300 group-hover:text-indigo-300 underline transition-colors flex items-center space-x-1.5 mt-1">
+            <span>oleander.mx</span>
+            <ExternalLink className="w-3.5 h-3.5 inline" />
+          </span>
+        </a>
       </motion.div>
 
       {/* Reset Admin PIN Modal */}

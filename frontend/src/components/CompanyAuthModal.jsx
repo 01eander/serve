@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, Mail, Lock, Sparkles, UserCheck, KeyRound, Loader2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Building2, Mail, Lock, Sparkles, UserCheck, KeyRound, Loader2, ArrowRight, ShieldCheck, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useCompany } from '../contexts/CompanyContext';
@@ -293,9 +293,20 @@ export default function CompanyAuthModal({ onAuthenticated }) {
             </form>
           )}
 
-          {/* Footer Logo Enlarged 2.2x */}
-          <div className="pt-4 border-t border-slate-800/60 flex items-center justify-center">
-            <img src={oleanderLogoWhite} alt="Oleander Software" className="h-18 sm:h-20 w-auto max-w-xs object-contain opacity-90 hover:opacity-100 transition-all duration-300" />
+          {/* Footer Logo Link */}
+          <div className="pt-4 border-t border-slate-800/60 flex flex-col items-center justify-center">
+            <a
+              href="https://oleander.mx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex flex-col items-center justify-center transition-all hover:scale-105"
+            >
+              <img src={oleanderLogoWhite} alt="Oleander Software" className="h-16 sm:h-18 w-auto max-w-xs object-contain opacity-90 group-hover:opacity-100 transition-all duration-300" />
+              <span className="text-xs font-bold text-slate-400 group-hover:text-primary-400 underline transition-colors flex items-center space-x-1 mt-0.5">
+                <span>oleander.mx</span>
+                <ExternalLink className="w-3 h-3 inline" />
+              </span>
+            </a>
           </div>
         </div>
       </motion.div>
