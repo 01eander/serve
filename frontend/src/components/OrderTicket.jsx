@@ -24,10 +24,10 @@ export default function OrderTicket({
   isFreemium,
   onRequirePro
 }) {
-  const { taxRate, formatCurrency } = useCurrency();
+  const { taxRate = 16, formatCurrency } = useCurrency();
   const { t } = useLanguage();
-  const subtotal = orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const tax = subtotal * (taxRate / 100);
+  const subtotal = (orderItems || []).reduce((acc, item) => acc + (parseFloat(item?.price || 0) * (item?.quantity || 1)), 0);
+  const tax = subtotal * ((taxRate || 0) / 100);
   const total = subtotal + tax;
 
   const hasUnsentItems = orderStatus === 'new' || orderStatus === 'pending_kitchen';

@@ -5,6 +5,8 @@ import ThemeLangToggles from './ThemeLangToggles';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useTheme } from '../contexts/ThemeContext';
+import { useCompany } from '../contexts/CompanyContext';
+import { API_BASE_URL } from '../config/api';
 import oleanderLogoBlack from '../images/oleander_logo_black.png.png';
 import oleanderLogoWhite from '../images/oleander_logo_white.png.png';
 
@@ -23,8 +25,9 @@ const getPlaceholderImage = (categoryName, productId) => {
   return categories[categoryName] || defaultImage;
 };
 
-export default function MenuArea({ categories, menuItems, onAddToOrder, onBackToMap, tableNumber }) {
-  const [activeCategory, setActiveCategory] = useState(1);
+export default function MenuArea({ categories = [], menuItems = [], onAddToOrder, onBackToMap, tableNumber }) {
+  const { companyFetch } = useCompany();
+  const [activeCategory, setActiveCategory] = useState(() => (Array.isArray(categories) && categories.length > 0 ? categories[0].id : 1));
   const [searchQuery, setSearchQuery] = useState('');
   const [promotions, setPromotions] = useState([]);
   const { t } = useLanguage();
@@ -32,15 +35,31 @@ export default function MenuArea({ categories, menuItems, onAddToOrder, onBackTo
   const { theme } = useTheme();
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/promotions`)
-      .then(res => res.json())
-      .then(data => setPromotions(data.filter(p => p.active)))
-      .catch(err => console.error('Error fetching promotions in POS:', err));
-  }, []);
+    if (Array.isArray(categories) && categories.length > 0 && !categories.some(c => c.id === activeCategory)) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    const fetchPromos = async () => {
+      try {
+        const fetchFn = companyFetch || fetch;
+        const res = await fetchFn(`${API_BASE_URL}/api/promotions`);
+        if (res.ok) {
+          const data = await res.json();
+          setPromotions(Array.isArray(data) ? data.filter(p => p.active) : []);
+        }
+      } catch (err) {
+        console.error('Error fetching promotions in POS:', err);
+      }
+    };
+    fetchPromos();
+  }, [companyFetch]);
   
-  const filteredProducts = menuItems?.filter(p => {
+  const filteredProducts = (menuItems || []).filter(p => {
+    if (!p) return false;
     const matchesCategory = p.category_id === activeCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = p.name ? p.name.toLowerCase().includes(searchQuery.toLowerCase()) : false;
     return searchQuery ? matchesSearch : matchesCategory;
   });
 
