@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS menu_items (
 CREATE TABLE IF NOT EXISTS tables (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     company_id INT REFERENCES companies(id) ON DELETE CASCADE,
-    table_number VARCHAR(10) NOT NULL,
+    table_number VARCHAR(150) NOT NULL,
     capacity INT,
     status VARCHAR(20) DEFAULT 'available' CHECK (status IN ('available', 'occupied', 'reserved'))
 );

@@ -41,6 +41,7 @@ async function initMultiTenancy() {
 
     // Drop legacy single-column UNIQUE constraint on table_number so each company can have Mesa 1, 2, etc.
     await pool.query(`ALTER TABLE tables DROP CONSTRAINT IF EXISTS tables_table_number_key`);
+    await pool.query(`ALTER TABLE tables ALTER COLUMN table_number TYPE VARCHAR(150)`);
 
     // Check if demo company exists, if not seed it
     const checkCompany = await pool.query('SELECT COUNT(*) FROM companies');

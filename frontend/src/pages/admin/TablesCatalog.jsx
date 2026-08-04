@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, X, Check } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useCompany } from '../../contexts/CompanyContext';
 import { API_BASE_URL } from '../../config/api';
 
 export default function TablesCatalog() {
   const { t } = useLanguage();
+  const { companyFetch } = useCompany();
   const [tables, setTables] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState('');
@@ -24,7 +27,8 @@ export default function TablesCatalog() {
   const fetchTables = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/tables`);
+      const fetchFn = companyFetch || fetch;
+      const res = await fetchFn(`${API_BASE_URL}/api/tables`);
       if (!res.ok) throw new Error('Error fetching tables');
       const data = await res.json();
       setTables(data);
@@ -53,11 +57,14 @@ export default function TablesCatalog() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       const url = editingTable ? `${API_BASE_URL}/api/tables/${editingTable.id}` : `${API_BASE_URL}/api/tables`;
       const method = editingTable ? 'PUT' : 'POST';
+      const fetchFn = companyFetch || fetch;
       
-      const res = await fetch(url, {
+      const res = await fetchFn(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -78,13 +85,16 @@ export default function TablesCatalog() {
       fetchTables();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async (table) => {
     if (!confirm(`${t('confirm_delete_table')} ${table.table_number}? ${t('confirm_delete_table_warning')}`)) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/tables/${table.id}`, {
+      const fetchFn = companyFetch || fetch;
+      const res = await fetchFn(`${API_BASE_URL}/api/tables/${table.id}`, {
         method: 'DELETE'
       });
       if (!res.ok) throw new Error('Error deleting table (posiblemente tiene órdenes históricas asociadas)');
@@ -167,6 +177,7 @@ export default function TablesCatalog() {
                   <input 
                     type="text" 
                     required
+                    maxLength={100}
                     value={formData.table_number}
                     onChange={e => setFormData({...formData, table_number: e.target.value})}
                     className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-primary-500 text-slate-900 dark:text-white font-bold transition-all"
@@ -203,8 +214,12 @@ export default function TablesCatalog() {
                 <button type="button" onClick={handleCloseModal} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                   {t('cancel')}
                 </button>
-                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2">
-                  <Check className="w-4 h-4" />
+                <button 
+                  type="submit" 
+                  disabled={isSaving}
+                  className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2"
+                >
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                   <span>{t('save')}</span>
                 </button>
               </div>
