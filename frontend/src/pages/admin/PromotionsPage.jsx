@@ -231,8 +231,8 @@ export default function PromotionsPage() {
         </div>
       )}
 
-      {/* Grid of Promotions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Grid of Promotions with vertical scrolling */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[60vh] sm:max-h-[70vh] overflow-y-auto pr-1 custom-scrollbar">
         {promotions.map((promo) => {
           const isPercent = promo.discount_type === 'percent';
 

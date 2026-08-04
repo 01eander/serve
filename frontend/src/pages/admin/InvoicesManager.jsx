@@ -139,11 +139,10 @@ export default function InvoicesManager() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto overflow-y-auto max-h-[58vh] sm:max-h-[68vh] custom-scrollbar">
+          <table className="w-full text-left text-sm whitespace-nowrap min-w-[700px]">
+            <thead className="sticky top-0 bg-slate-50 z-10">
+              <tr className="border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                   <th className="px-6 py-4">ID Factura</th>
                   <th className="px-6 py-4">Fecha Solicitud</th>
                   <th className="px-6 py-4">Datos Fiscales</th>

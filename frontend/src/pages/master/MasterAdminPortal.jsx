@@ -192,34 +192,35 @@ export default function MasterAdminPortal() {
   const overview = data.overview || {};
 
   return (
-    <div className="h-screen overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 font-sans p-6 md:p-10 space-y-8">
+    <div className="h-screen overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 font-sans p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8">
       
       {/* SuperAdmin Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-slate-900/90 backdrop-blur-xl p-6 md:p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
-        <div className="flex items-center space-x-5">
-          <div className="p-4 bg-gradient-to-tr from-primary-600 via-indigo-600 to-violet-600 rounded-3xl shadow-xl shadow-primary-500/20">
-            <ShieldCheck className="w-8 h-8 text-white animate-pulse" />
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-6 md:p-8 rounded-[1.8rem] sm:rounded-[2.5rem] bg-slate-900/90 backdrop-blur-xl border border-slate-800 shadow-2xl">
+        <div className="flex items-center space-x-3 sm:space-x-5">
+          <div className="p-3 sm:p-4 bg-gradient-to-tr from-primary-600 via-indigo-600 to-violet-600 rounded-2xl sm:rounded-3xl shadow-xl shadow-primary-500/20 shrink-0">
+            <ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8 text-white animate-pulse" />
           </div>
           <div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">Administrador Maestro</h1>
-              <span className="px-3 py-1 bg-amber-500/20 text-amber-300 font-extrabold text-xs rounded-full border border-amber-500/30 flex items-center space-x-1">
-                <Sparkles className="w-3.5 h-3.5" />
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white">Administrador Maestro</h1>
+              <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-amber-500/20 text-amber-300 font-extrabold text-[10px] sm:text-xs rounded-full border border-amber-500/30 flex items-center space-x-1">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>SuperAdmin Platform</span>
               </span>
             </div>
-            <p className="text-sm text-slate-400 font-medium mt-0.5">Gestión Global de Empresas, Catálogos, Suscripciones y Clientes Morosos</p>
+            <p className="text-xs sm:text-sm text-slate-400 font-medium mt-0.5">Gestión Global de Empresas, Catálogos, Suscripciones y Clientes Morosos</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <img src={oleanderLogoWhite} alt="Oleander Software" className="h-[100px] w-auto max-w-[280px] object-contain opacity-100 drop-shadow-lg" />
+        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <img src={oleanderLogoWhite} alt="Oleander Software" className="h-10 sm:h-16 md:h-[90px] w-auto max-w-[160px] sm:max-w-[280px] object-contain opacity-100 drop-shadow-lg" />
           <button
             onClick={handleLogout}
-            className="px-5 py-3 bg-red-950/80 hover:bg-red-900 text-red-300 font-bold text-xs rounded-2xl border border-red-800/80 transition-all flex items-center space-x-2"
+            className="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-red-950/80 hover:bg-red-900 text-red-300 font-bold text-xs rounded-xl sm:rounded-2xl border border-red-800/80 transition-all flex items-center space-x-1.5 shrink-0"
           >
             <LogOut className="w-4 h-4" />
-            <span>Cerrar Sesión SuperAdmin</span>
+            <span className="hidden sm:inline">Cerrar Sesión SuperAdmin</span>
+            <span className="sm:hidden">Salir</span>
           </button>
         </div>
       </header>
@@ -342,16 +343,16 @@ export default function MasterAdminPortal() {
 
         </div>
 
-        {/* Table Container */}
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse">
-            <thead>
+        {/* Table Container with vertical & horizontal scroll */}
+        <div className="overflow-x-auto overflow-y-auto max-h-[55vh] sm:max-h-[68vh] rounded-2xl border border-slate-800 custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[700px]">
+            <thead className="sticky top-0 bg-slate-900 z-10">
               <tr className="border-b border-slate-800 text-xs font-black uppercase tracking-wider text-slate-400">
-                <th className="py-4 px-4">Empresa / Cliente</th>
-                <th className="py-4 px-4">Catálogos & Registros</th>
-                <th className="py-4 px-4">Plan & Vencimiento PRO</th>
-                <th className="py-4 px-4">Estado Operativo</th>
-                <th className="py-4 px-4 text-right">Acciones & Facturación</th>
+                <th className="py-4 px-4 whitespace-nowrap">Empresa / Cliente</th>
+                <th className="py-4 px-4 whitespace-nowrap">Catálogos & Registros</th>
+                <th className="py-4 px-4 whitespace-nowrap">Plan & Vencimiento PRO</th>
+                <th className="py-4 px-4 whitespace-nowrap">Estado Operativo</th>
+                <th className="py-4 px-4 text-right whitespace-nowrap">Acciones & Facturación</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-sm">

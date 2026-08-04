@@ -117,16 +117,16 @@ export default function UsersCatalog() {
         </button>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase font-extrabold tracking-wider">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-x-auto overflow-y-auto max-h-[58vh] sm:max-h-[68vh] custom-scrollbar">
+        <table className="w-full text-left min-w-[600px]">
+          <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase font-extrabold tracking-wider z-10">
             <tr>
-              <th className="p-4">{t('id')}</th>
-              <th className="p-4">{t('name')}</th>
-              <th className="p-4">{t('role')}</th>
-              <th className="p-4">{t('pin')}</th>
-              <th className="p-4">{t('status')}</th>
-              <th className="p-4 text-right">{t('actions')}</th>
+              <th className="p-4 whitespace-nowrap">{t('id')}</th>
+              <th className="p-4 whitespace-nowrap">{t('name')}</th>
+              <th className="p-4 whitespace-nowrap">{t('role')}</th>
+              <th className="p-4 whitespace-nowrap">{t('pin')}</th>
+              <th className="p-4 whitespace-nowrap">{t('status')}</th>
+              <th className="p-4 text-right whitespace-nowrap">{t('actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
