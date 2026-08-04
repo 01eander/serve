@@ -8,6 +8,8 @@ import ProUpgradeModal from '../../components/ProUpgradeModal';
 import smallLogo from '../../images/small_LOGO.png';
 import FranchiseSection from './FranchiseSection';
 
+import { compressImage } from '../../utils/imageCompressor';
+
 export default function SettingsPage() {
   const { t } = useLanguage();
   const { company, updateCompanyConfig } = useCompany();
@@ -39,22 +41,20 @@ export default function SettingsPage() {
     }
   }, [company]);
 
-  const handleLogoFileUpload = (e) => {
+  const handleLogoFileUpload = async (e) => {
     if (isFreemium) {
       setShowUpgradeModal(true);
       return;
     }
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert(t('image_too_large'));
-        return;
+      try {
+        const compressedBase64 = await compressImage(file, 600, 600, 0.75);
+        setCompanyLogo(compressedBase64);
+      } catch (err) {
+        console.error('Error compressing logo:', err);
+        alert('No se pudo procesar el logo seleccionado.');
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCompanyLogo(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 

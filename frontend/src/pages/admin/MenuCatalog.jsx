@@ -2,13 +2,19 @@ import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon, X, Check, Power } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useCompany } from '../../contexts/CompanyContext';
 import { API_BASE_URL } from '../../config/api';
+import { compressImage } from '../../utils/imageCompressor';
 
 export default function MenuCatalog() {
   const { t } = useLanguage();
+  const { companyFetch } = useCompany();
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSavingItem, setIsSavingItem] = useState(false);
+  const [isSavingCat, setIsSavingCat] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState(null);
   const [canEdit, setCanEdit] = useState(true);
   
@@ -33,7 +39,8 @@ export default function MenuCatalog() {
   const fetchMenu = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/menu`);
+      const fetchFn = companyFetch || fetch;
+      const res = await fetchFn(`${API_BASE_URL}/api/menu`);
       if (!res.ok) throw new Error('Error fetching menu');
       const data = await res.json();
       setCategories(data.categories);
@@ -53,28 +60,36 @@ export default function MenuCatalog() {
       setItemForm({ name: item.name, price: item.price, category_id: item.category_id, image: item.image || '', active: item.active });
     } else {
       setEditingItem(null);
-      setItemForm({ name: '', price: '', category_id: '', image: '', active: true });
+      setItemForm({ name: '', price: '', category_id: categories[0]?.id || '', image: '', active: true });
     }
     setShowItemModal(true);
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setItemForm(prev => ({ ...prev, image: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setCompressing(true);
+      try {
+        const compressedBase64 = await compressImage(file, 600, 600, 0.75);
+        setItemForm(prev => ({ ...prev, image: compressedBase64 }));
+      } catch (err) {
+        console.error('Error compressing image:', err);
+        alert('No se pudo procesar la imagen seleccionada.');
+      } finally {
+        setCompressing(false);
+      }
     }
   };
 
   const handleSaveItem = async (e) => {
     e.preventDefault();
+    if (isSavingItem || compressing) return;
+    setIsSavingItem(true);
     try {
       const url = editingItem ? `${API_BASE_URL}/api/menu/items/${editingItem.id}` : `${API_BASE_URL}/api/menu/items`;
       const method = editingItem ? 'PUT' : 'POST';
-      const res = await fetch(url, {
+      const fetchFn = companyFetch || fetch;
+      const res = await fetchFn(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(itemForm)
@@ -95,6 +110,8 @@ export default function MenuCatalog() {
       fetchMenu();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setIsSavingItem(false);
     }
   };
 
@@ -126,10 +143,13 @@ export default function MenuCatalog() {
 
   const handleSaveCat = async (e) => {
     e.preventDefault();
+    if (isSavingCat) return;
+    setIsSavingCat(true);
     try {
       const url = editingCat ? `${API_BASE_URL}/api/menu/categories/${editingCat.id}` : `${API_BASE_URL}/api/menu/categories`;
       const method = editingCat ? 'PUT' : 'POST';
-      const res = await fetch(url, {
+      const fetchFn = companyFetch || fetch;
+      const res = await fetchFn(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(catForm)
@@ -150,6 +170,8 @@ export default function MenuCatalog() {
       fetchMenu();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setIsSavingCat(false);
     }
   };
 
@@ -371,14 +393,21 @@ export default function MenuCatalog() {
                   )}
 
                   <div className="flex-1 space-y-1.5">
-                    <label className="inline-block px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-xs rounded-xl cursor-pointer transition-all shadow-md active:scale-95">
-                      {t('upload_photo')}
-                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                    <label className="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-xs rounded-xl cursor-pointer transition-all shadow-md active:scale-95 space-x-1.5">
+                      {compressing ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Optimizando...</span>
+                        </>
+                      ) : (
+                        <span>{t('upload_photo')}</span>
+                      )}
+                      <input type="file" accept="image/*" disabled={compressing} onChange={handleImageUpload} className="hidden" />
                     </label>
                     <input
                       type="url"
                       placeholder={t('paste_image_url')}
-                      value={itemForm.image}
+                      value={itemForm.image?.startsWith('http') ? itemForm.image : ''}
                       onChange={e => setItemForm({ ...itemForm, image: e.target.value })}
                       className="w-full p-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-primary-500 text-slate-900 dark:text-white font-bold"
                     />
@@ -388,7 +417,14 @@ export default function MenuCatalog() {
 
               <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-6 flex justify-end space-x-3">
                 <button type="button" onClick={() => setShowItemModal(false)} className="px-5 py-2.5 rounded-xl font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">{t('cancel')}</button>
-                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2"><Check className="w-4 h-4" /><span>{t('save')}</span></button>
+                <button 
+                  type="submit" 
+                  disabled={isSavingItem || compressing}
+                  className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2"
+                >
+                  {isSavingItem ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                  <span>{t('save')}</span>
+                </button>
               </div>
             </form>
           </div>
@@ -414,7 +450,14 @@ export default function MenuCatalog() {
               </div>
               <div className="pt-4 border-t border-gray-100 mt-6 flex justify-end space-x-3">
                 <button type="button" onClick={() => setShowCatModal(false)} className="px-5 py-2.5 rounded-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors">{t('cancel')}</button>
-                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2"><Check className="w-4 h-4" /><span>{t('save')}</span></button>
+                <button 
+                  type="submit" 
+                  disabled={isSavingCat}
+                  className="px-5 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 shadow-md shadow-primary-500/20 transition-colors flex items-center space-x-2"
+                >
+                  {isSavingCat ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                  <span>{t('save')}</span>
+                </button>
               </div>
             </form>
           </div>
